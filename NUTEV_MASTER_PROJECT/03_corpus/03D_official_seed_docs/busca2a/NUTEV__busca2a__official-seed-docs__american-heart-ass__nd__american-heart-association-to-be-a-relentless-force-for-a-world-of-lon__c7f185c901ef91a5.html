@@ -1,0 +1,2868 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<base href="https://www2.heart.org/site/SPageServer?pagename=%2FHeartWalk_Landing_Page" />
+
+		<title>
+		    
+		    Heart Walk - American Heart Association
+		</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<meta http-equiv="Content-Script-Type" content="text/javascript" />
+		<meta name="Keywords" content="American Heart Association Heart Walk " />
+		<meta name="Description" content="The Heart Walk is the American Heart Association's premiere event for raising funds to save lives from USA's #1 and #5 killers - heart disease and stroke." />
+        
+		
+		
+		<script type="text/javascript">
+// feature toggle used for Timeout modal issue
+localStorage.setItem('useModalTimeoutToggle', 'false');
+</script>
+<input type="hidden" id="sessionTimeoutHdr" value="Session Timeout">
+<input type="hidden" id="sessionTimeoutGenMsg" value="Your session will expire soon unless you continue working.">
+<input type="hidden" id="sessionTimeoutMsgFirstPart" value="Your session will expire in">
+<input type="hidden" id="sessionTimeoutMsgSecondPart" value="unless you continue working.">
+<input type="hidden" id="sessionTimeoutLessThanMinMsg" value="less than one minute">
+<input type="hidden" id="minute" value="minute">
+<input type="hidden" id="minutes" value="minutes">
+<input type="hidden" id="sessionExpired" value="Your session expired at">
+<input type="hidden" id="continueWorking" value="Continue Working">
+<input type="hidden" id="logOut" value="Log Out">
+
+
+<script type="text/javascript">
+var keepAliveString = "keepAlive2('', 'https://www2.heart.org/site/UserLogin?logout=logout&NEXTURL=https%3A%2F%2Fwww2.heart.org%2Fsite%2FSPageNavigator%2FHeartWalk_Landing_Page.html', 'E070CB0FA1798216718B2081C809173E.app30011a', 'jsessionid', '/site/', false, true, false)";
+var forceKeepAliveString = "forceKeepAlive2('')";
+function startTimeout() {
+setTimeout(function() {
+eval(keepAliveString);
+}, 480000);
+}
+function resetTimeout() {
+setTimeout(keepAliveString, 480000);
+}
+startTimeout();
+</script><noscript>&nbsp;</noscript>
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="../yui3/yui/yui-min.js"></script><noscript>&nbsp;</noscript>
+<script type="text/javascript" src="../js/convio/modules.js?version=2.9.3"></script><noscript>&nbsp;</noscript>
+<script type="text/javascript">
+var Y = YUI({base: '../yui3/',
+insertBefore: 'yui_marker_loader_css', // insert all YUI module css before customstyle so it can be overridden
+debug: false, 
+modules: getModules('../', 'convio', true, true)});
+localStorage.setItem('useNewYUI', 'false');
+</script><noscript>&nbsp;</noscript>
+
+
+
+<script type="text/javascript" src="../js/utils.js"></script><noscript>&nbsp;</noscript>
+
+<script type="text/javascript" src="../js/obs_comp_rollup.js"></script><noscript>&nbsp;</noscript>
+
+
+<link href="../css/themes/default.css" rel="stylesheet" type="text/css" />
+<link href="../css/themes/alphacube.css" rel="stylesheet" type="text/css"/>
+
+
+
+
+
+<link href="../css/UserGlobalStyle.css" rel="stylesheet" type="text/css" />
+
+
+
+
+<link rel="stylesheet" type="text/css" id="yui_marker_loader_css" />
+<link href="../css/CustomStyle.css" rel="stylesheet" type="text/css" />
+<link href="../css/CustomWysiwygStyle.css" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+<meta name="CnvHeaderVersion" content="v5.0" />
+
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<link rel="SHORTCUT ICON" href="../heartwalk/images/index.ico">
+		
+		
+ 
+ 
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XNHFKQRFXW"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+function setDefaultGtagProperty() {
+gtag('config', 'G-XNHFKQRFXW', {
+'page_title': window.location.href
+});
+}
+gtag('js', new Date());
+
+let pseudoUrl = "";
+if (pseudoUrl != null) {
+let pageTitle = pseudoUrl.split("/");
+if (pageTitle != null && pageTitle.length >= 3) {
+gtag('config', 'G-XNHFKQRFXW', {'send_page_view': false});
+gtag('event', 'page_view', {
+page_title: pageTitle[2],
+page_location: '',
+page_path: ''
+});
+addOnLoadHandler(function() {
+if (typeof trackEcommereceEvent != "undefined" && typeof trackEcommereceEvent != null){
+trackEcommereceEvent();
+}
+});
+} else {
+setDefaultGtagProperty();
+}
+} else {
+setDefaultGtagProperty();
+}
+
+</script>
+
+		
+		
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      'event': 'dataLayer-initialized', 
+
+      
+      
+
+        
+          
+            
+              'pageType': 'Heart Walk Homepage', 
+            
+            
+          
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+        
+        
+
+        
+
+        
+
+        
+      
+
+      
+        
+          'uid': undefined, 
+          'loggedIn': 'no'
+        
+      
+    });
+  </script>
+  
+  
+    <script>
+      Y.use('jquery-noconflict', function() {
+        (function($) {
+          $(function() {
+            var landingPromoMap = {
+              promo1: {
+                icon: 'heartwalk2017-landingCTA-started.png', 
+                creative: 'heart'
+              }, 
+              promo2: {
+                icon: 'heartwalk2017-landingCTA-survivor.png', 
+                creative: 'shooting stars'
+              }, 
+              promo3: {
+                icon: 'heartwalk2017-landingCTA-national.png', 
+                creative: 'team of walkers'
+              }, 
+              promo4: {
+                icon: 'heartwalk2017-landingCTA-local.png', 
+                creative: 'two walkers'
+              }
+            }, 
+            landingPromos = [], 
+            promoClickHandler = function(landingPromoData) {
+              window.dataLayer = window.dataLayer || [];
+              window.dataLayer.push({
+                'event': 'promotion-click', 
+                'ecommerce': {
+                  'promoClick': {
+                    'promotions': [landingPromoData]
+                  }
+                }
+              });
+            };
+            $('.landingCTAText').each(function(landingCTATextIndex) {
+              var $this = $(this), 
+              landingPromoIndex = landingCTATextIndex + 1, 
+              landingPromoId = 'promo' + landingPromoIndex, 
+              landingPromoItem = landingPromoMap[landingPromoId], 
+              $promoIcon = $this.parent().find('.landingCTAIcon > img').eq(0);
+              if($promoIcon.length > 0) {
+                var promoIcon = $promoIcon.attr('src');
+                if(promoIcon.indexOf(landingPromoItem.icon) !== -1) {
+                  var $promoHeadline = $this.find('> strong').eq(0);
+                  if($promoHeadline.length > 0) {
+                    var landingPromoData = {
+                      'id': landingPromoId, 
+                      'name': $.trim($promoHeadline.text()), 
+                      'creative': landingPromoItem.creative, 
+                      'position': 'homepage_banner_' + landingPromoIndex
+                    };
+                    landingPromos.push(landingPromoData);
+                    var $promoButton = $this.parent().find('> .button').eq(0);
+                    if($promoButton.length > 0) {
+                      Utils.addEvent($promoButton.get()[0], 'click', function() {
+                        promoClickHandler(landingPromoData);
+                      });
+                    }
+                  }
+                }
+              }
+            });
+            if(landingPromos.length > 0) {
+              window.dataLayer = window.dataLayer || [];
+              window.dataLayer.push({
+                'event': 'promotion-impression', 
+                'ecommerce': {
+                  'promoView': {
+                    'promotions': landingPromos
+                  }
+                }
+              });
+            }
+          });
+        })(jQuery);
+      });
+    </script>
+  
+  <!-- registration ptype/tfind script referer?  -->
+  
+  
+  
+  
+  
+  
+
+
+  
+
+
+  
+
+  
+
+
+
+  
+
+  
+
+  
+
+
+  
+
+  <!-- **** personal and team page buttons socials -->
+
+  
+
+  <!-- **** end personal page and team page buttons socials -->
+
+  <!-- *********  donation form socials -->
+  
+  <!-- ******* end donation form socials -->
+
+  
+
+  
+
+
+  
+  
+  
+  <!-- Google Tag Manager - Install in Head -->
+  <script>
+    
+      var gtmContainerId = 'GTM-NSKQ7DV';
+    
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',gtmContainerId);
+  </script>
+  <!-- End Google Tag Manager - Install in Head -->
+
+	</head>
+	<body
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		class="mobile"
+	>
+		
+  <!-- Google Tag Manager (noscript) - Install in Body -->
+  
+    
+  
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NSKQ7DV" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) - Install in Body -->
+
+		
+<!-- start reus_HeartWalk_p1redesign_header -->
+<script type="text/javascript">
+_gaq.push(['t2._setAccount', 'UA-13230711-1']);
+_gaq.push(['t2._setDomainName', 'none']);
+_gaq.push(['t2._setAllowLinker', true]);
+_gaq.push(['t2._trackPageview']);
+_gaq.push(['t3._setAccount', 'UA-13230711-2']);
+_gaq.push(['t3._setDomainName', 'none']);
+_gaq.push(['t3._setAllowLinker', true]);
+
+(function () {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+<a href="https://www2.heart.org/site/SPageNavigator/HeartWalk_Landing_Page.html#mainWrapper" class="aural-only">Skip to content</a>
+
+<div id="headerWrapper" class="pushit">
+  <div class="container mobile-header hidden-xs hidden-sm">
+    <div class="row">
+      <div class="col-xs-12">
+        
+          <div class="loggedout pull-right"> 
+              <a class="button" href="UserLogin?NEXTURL=https%3A%2F%2Fwww2.heart.org%2Fsite%2FSPageNavigator%2FHeartWalk_Landing_Page.html">Login</a>
+          </div>
+        
+      </div>
+    </div>
+    <div class="row desktopLogoMenu">
+      <div class="col-md-6 logoMenu"> 
+        <a href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Landing_Page"><img alt="American Heart Association. Life is Why" class="ahalogo-noborder" src="../images/content/pagebuilder/AHA_HW_LOGOAug_rebrand_251.jpg"></a> 
+      </div>
+      <div class="col-md-6 logoMenu">
+        <div class="additionalHeaderLinks pull-right">
+          <div class="pull-left text-center">
+            <a class="button regBtn" href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Landing_Page#zipEventSearch">
+              Register
+            </a>
+          </div>
+          <div class="pull-left text-center donateBtn">
+            <a href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Landing_Page#landingTriSearch">
+              Donate
+            </a>
+          </div>
+          <div class="pull-left text-center">
+            <button id="aboutMenuBtn" aria-controls="aboutSidenav" aria-haspopup="true" aria-label="Learn Menu collapsed">
+              <span class="aboutBtn">Learn</span> <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container aha-mobile-header visible-xs visible-sm">
+    <div class="row">
+      <div class="col-xs-8 pull-left">
+        <a href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Landing_Page"><img alt="American Heart Association. Life is Why" class="ahalogo-noborder" src="../images/content/pagebuilder/AHA_HW_LOGOAug_rebrand_251.jpg"></a>
+      </div>
+      <div class="col-xs-4">
+        <div class="btn-group pull-right">
+          <button onclick="openNav()" type="button" class="btn btn-lg" style="background: none; font-size: 35px;"><span class="glyphicon glyphicon-align-justify"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="aboutSidenav" class="sidenav pushit" aria-label="Sidebar Navigation">
+  <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
+  <a href="UserLogin?NEXTURL=https%3A%2F%2Fwww2.heart.org%2Fsite%2FSPageNavigator%2FHeartWalk_Landing_Page.html">Login</a>
+  <a class="regBtn" href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Landing_Page#zipEventSearch">Register</a>
+  <a class="donateBtn" href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Landing_Page#landingTriSearch">Donate</a>
+  <a href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Event_Info">Event Info</a>
+  <a href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_FAQ">FAQ</a>
+  <a href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Volunteer">Volunteer Power</a>
+  <a href="https://heartchallenge.heart.org/national-teams">National Teams</a>
+  <a href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Local_Companies">Company Teams</a>
+  <a href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Learn_More" aria-label="Learn more about AHA">Learn More</a>
+  <a href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Contact_Us">Contact Us</a>
+</div>
+<!-- end reus_HeartWalk_p1redesign_header -->
+
+<div id="preWrapper" class="pushit">
+<div class="container">
+<div class="homeLandingStrip"></div>
+
+<div class="homeLandingImg"><div class="cd-intro animated">
+    <div class="cd-headline letters type" aria-hidden="true">
+        <span class="cd-words-wrapper waiting">
+            <b class="is-visible">Life</b>
+            <b>Family</b>
+            <b>Mom</b>
+        </span>
+        <span>is why.</span>
+    </div>
+<h1 id="subHeadType">Life is why we walk. What's your reason?</h1>
+</div>
+</div>
+
+   </div>
+</div>
+<div id="mainWrapper" class="pushit">
+
+      
+
+
+
+
+
+<style>
+.paymentSelType img {max-width:100%;padding-bottom:20px;}
+.paymentSelType a:nth-last-child(1) img {padding-bottom:0;}
+</style>
+
+<!-- EVENT SEARCH SECTION -->
+<section id="eventSearch" class="section-event-search gradient-background pt-5 pb-5">
+    <div class="event-search-container container">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1 col-xs-8 col-xs-offset-2">
+          <h2 class="text-center pb-4">Heart Walks Near Your Area</h2>
+          <div class="row no-gutters">
+            <div class="form-group col-xs-12 col-md-5">
+              <form class="row no-gutters ml-0 mr-0 pr-0 pl-0 js__zip-search" onsubmit="_gaq.push(['_trackEvent', 'program homepage', 'click', 'search enter zip']);">
+                    <label for="zip" class="sr-only">Enter Zip</label>
+                    <input type="text" class="search form-control col-xs-9" id="zip" placeholder="Enter ZIP">
+                    <!-- <button type="submit" class="button search-button action-button search-submit"><span class="sr-only">Search</span>Search</button> -->
+                    <button type="submit" class="col-xs-3 search-button action-button search-submit"><span class="sr-only">Search</span> <svg version="1.1" class="search-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24" xml:space="preserve" aria-hidden="true"><g transform="translate(-1358,-18)"><path class="st0" d="M1374.8,33.4l-1.4,1.4l0.7,0.7l5.7,5.7l0.7,0.7l1.4-1.4l-0.7-0.7l-5.7-5.7L1374.8,33.4z"></path><path class="st0" d="M1368.3,18c-5.6,0-10.3,4.6-10.3,10.3s4.6,10.3,10.3,10.3s10.3-4.6,10.3-10.3S1373.9,18,1368.3,18z
+                        M1368.3,20.1c4.5,0,8.2,3.7,8.2,8.2s-3.7,8.2-8.2,8.2s-8.2-3.7-8.2-8.2S1363.7,20.1,1368.3,20.1z"></path></g></svg></button>
+              </form>
+            </div>
+            <p class="form-group-divider col-xs-12 col-md-2 text-center">or</p>
+            <div class="form-group select col-xs-12 col-md-5">
+              <form class="row no-gutters ml-0 mr-0 pr-0 pl-0 js__state-search" onsubmit="_gaq.push(['_trackEvent', 'program homepage', 'click', 'search enter state']);">
+                    <!-- <div class="col-xs-5 col-md-5">
+                        <label for="city" class="sr-only">City</label>
+                        <input type="text" class="search form-control " id="city" placeholder="City">     
+                    </div> -->
+                    <div class="col-xs-12 event-state-select-container">
+                        <label for="fr_event_state" class="sr-only">Select State</label>
+                        <select name="fr_event_state" id="fr_event_state" class="search form-control col-12" size="1">
+                            <option>Select State</option>
+                            <option value="AK">AK</option>
+                            <option value="AL">AL</option>
+                            <option value="AR">AR</option>
+                            <option value="AZ">AZ</option>
+                            <option value="CA">CA</option>
+                            <option value="CO">CO</option>
+                            <option value="CT">CT</option>
+                            <option value="DC">DC</option>
+                            <option value="DE">DE</option>
+                            <option value="FL">FL</option>
+                            <option value="GA">GA</option>
+                            <option value="HI">HI</option>
+                            <option value="IA">IA</option>
+                            <option value="ID">ID</option>
+                            <option value="IL">IL</option>
+                            <option value="IN">IN</option>
+                            <option value="KS">KS</option>
+                            <option value="KY">KY</option>
+                            <option value="LA">LA</option>
+                            <option value="MA">MA</option>
+                            <option value="MD">MD</option>
+                            <option value="ME">ME</option>
+                            <option value="MI">MI</option>
+                            <option value="MN">MN</option>
+                            <option value="MO">MO</option>
+                            <option value="MS">MS</option>
+                            <option value="MT">MT</option>
+                            <option value="NC">NC</option>
+                            <option value="ND">ND</option>
+                            <option value="NE">NE</option>
+                            <option value="NH">NH</option>
+                            <option value="NJ">NJ</option>
+                            <option value="NM">NM</option>
+                            <option value="NV">NV</option>
+                            <option value="NY">NY</option>
+                            <option value="OH">OH</option>
+                            <option value="OK">OK</option>
+                            <option value="OR">OR</option>
+                            <option value="PA">PA</option>
+                            <option value="RI">RI</option>
+                            <option value="SC">SC</option>
+                            <option value="SD">SD</option>
+                            <option value="TN">TN</option>
+                            <option value="TX">TX</option>
+                            <option value="UT">UT</option>
+                            <option value="VA">VA</option>
+                            <option value="VT">VT</option>
+                            <option value="WA">WA</option>
+                            <option value="WI">WI</option>
+                            <option value="WV">WV</option>
+                            <option value="WY">WY</option>
+                        </select>
+                        <button type="submit" class="sr-only js__state-search-submit">Select state combo box collapsed</button>
+                    </div>
+                    <!-- <div class="col-xs-3 col-md-4">
+                        <button type="submit" class="button js__state-search-submit">Search</button>
+                    </div>                       -->
+              </form>
+            </div>
+          </div>
+        </div>
+  
+        <div class="results-container col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
+          <!-- <div class="results-container-title">
+            <h3>Results</h3>
+          </div> -->
+          <div class="js__loading py-4 text-center  text-primary" style="display:none;">
+            <!-- <i class="fas fa-cog fa-2x fa-spin" aria-hidden="true" alt=""></i><br>-->
+            Loading... 
+          </div>
+          <div class="js__no-event-results alert alert-primary text-center col-md-8 offset-md-2 d-none" role="alert" aria-atomic="true">
+            <span>
+              We&#146;re not seeing anything on the horizon. Maybe try different search terms?
+            </span>
+          </div>
+          <div class="js__event-search-results d-none fadein">
+              
+          </div>
+          <div class="js__past-event-search-results d-none fadein">
+              
+          </div>
+          
+        </div>
+  
+        <div class="js__show-more-container col-xs-12 text-center">
+          <a href="SPageServer/?pagename=hw_events" class="js__show-more-events button" onclick="_gaq.push(['_trackEvent', 'program homepage', 'click', 'search result show all events']);" hidden="true">View More Results</a>
+          <a href="SPageServer/?pagename=hw_events" class="js__show-fewer-events button" onclick="_gaq.push(['_trackEvent', 'program homepage', 'click', 'search result show fewer events']);" hidden="true">View Fewer Results</a>
+        </div>
+        <div class="col-xs-12 text-center">
+           <!-- <div id="landingEventVirtual" class="text-center">Can&#8217;t find a walk in your area? <a href="https://www2.heart.org/site/SPageServer?pagename=heartwalk_register&fr_id=4853">Register to join us nationally here,</a> fundraise, have access to the Heart Walk Rewards Center and plan to take a walk where you live.</div>-->
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- END EVENT SEARCH SECTION -->
+
+<!-- <div class="container">
+    <div id="landingEventSearch" class="row">
+        <div class="col-md-10 col-md-offset-1 col-xs-12">
+            <h2 class="text-center" id="zipEventSearch">Heart Walks Near Your Area</h2>
+            <div class="eventSearchComponent text-center">
+            <form>
+                <div id="zipInputContainer">
+                    <label class="aural-only" for="inputZip">Zip Code</label><input id="inputZip" placeholder="Zip Code" name="theZip" type="text"><button class="button" id="zipSubmit" type="submit">Find Nearby Heart Walks</button>
+                </div>
+            </form>
+            </div>
+            <div class="eventSearchResult">
+                <div id="futureEventListContainer">
+                    <div id="futureEvents"></div>
+                </div>
+                <p class="viewMore text-center"><button id="viewMoreZipBtn" class="button" type="button">View More Results</button></p>
+            </div>
+            <div id="landingEventVirtual" class="text-center">Can&#8217;t find a walk in your area? You can still <a href="https://www2.heart.org/site/TR?fr_id=4853&pg=entry">join us virtually!</a></div>
+        </div>
+    </div>
+</div> -->
+
+<div class="container-fluid">
+    <div id="landingTriSearch" class="row">
+        <div class="container">
+            <div class="col-md-10 col-md-offset-1 col-xs-12">
+                <h2 class="text-center triSearchHeader">Search for a Walker, Team or Event</h2>
+                <p class="text-center">Looking for a walker or team to join or donate towards?<br><br> Put your money where your heart is.<br><br>Help create big science, like science that created the artificial heart valve. Your donation will help scientists develop lifesaving breakthroughs. What will you help us innovate next?<br><br>Simply enter their first name, last name or team name below and click search.</p>
+                <form>
+                    <div class="col-xs-12 no-padding">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="search-tabs tab-participant active"><a href="#participant" id="participantTab" aria-controls="participant" role="tab" data-toggle="tab">Walker</a></li>
+                            <li role="presentation" class="search-tabs tab-team"><a href="#team" aria-controls="team" id="teamTab" role="tab" data-toggle="tab">Team</a></li>
+                            <li role="presentation" class="search-tabs tab-event"><a href="#event" aria-controls="event" id="eventTab" role="tab" data-toggle="tab">Event</a></li>
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane tab-participant active" id="participant">
+                                <!-- <p>Enter the first and/or last name of the person you're searching for.</p> -->
+                                <div id="participantSearch">
+                                    <div id="error-participant" class="help-block alert alert-danger text-center hidden"></div>
+                                    <div class="input-group center-block">
+                                        <!-- <input type="text" id="event_query" name="event_name" ng-model="search" class="form-control" placeholder="Enter event name" autofocus /> -->
+                                        <div class="input-group col-xs-10 col-xs-offset-1">
+                                            <div class="col-md-6 col-md-offset-0 col-xs-12 col-xs-offset-0">
+                                                <label for="participant_first_name" class="aural-only">Walker's Name Fields</label>
+                                                <input type="text" id="participant_first_name" name="first_name" class="form-control" placeholder="First Name">
+                                            </div>
+                                            <div class="col-md-6 col-md-offset-0 col-xs-12 col-xs-offset-0">
+                                                <label for="participant_last_name" class="aural-only">Walker's Name Fields</label>
+                                                <input type="text" id="participant_last_name" name="last_name" class="form-control" placeholder="Last Name">
+                                            </div>
+                                            <div class="input-group-btn btn-designee-search">
+                                                <button id="search_participant" type="submit" class="button btn-tertiary">Search</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- begin participant table -->
+                                <div id="participant_results" class="results-table hidden">
+                                    <div id="participant_rows" class="results-rows"></div>
+                                </div>
+                                <!-- end participant table -->
+                                <p class="viewMore text-center"><button class="button viewMoreBtn" type="button">View More Results</button></p>
+                            </div>
+                            <div role="tabpanel" class="tab-pane tab-team" id="team">
+                                <!-- <p>Enter the team name you want to donate to.</p> -->
+                                <div id="teamSearch">
+                                    <div id="error-team" class="help-block alert alert-danger text-center hidden"></div>
+                                    <div class="input-group center-block">
+                                        <div class="input-group col-md-8 col-md-offset-2 col-xs-10 col-xs-offset-1">
+                                            <label for="team_name" class="aural-only">Team Name Field</label>
+                                            <input type="text" id="team_name" name="team_name" class="form-control" placeholder="Enter team name">
+                                            <div class="input-group-btn btn-designee-search">
+                                                <button id="search_team" type="submit" class="button btn-tertiary">Search</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- begin team table -->
+                                <div id="team_results" class="results-table hidden col-md-12">
+                                    <div id="team_rows" class="results-rows"></div>
+                                </div>
+                                <!-- end team table -->
+                                <p class="viewMore text-center"><button class="button viewMoreBtn" type="button">View More Results</button></p>
+                            </div>
+                            <div role="tabpanel" class="tab-pane tab-event" id="event">
+                                <!-- <p>Enter the name or zip code of the event you're looking for.</p> -->
+                                <div id="eventSearch">
+                                    <div id="error-event" class="help-block alert alert-danger text-center hidden"></div>
+                                    <div class="input-group center-block">
+                                        <div class="input-group col-md-8 col-md-offset-2 col-xs-10 col-xs-offset-1">
+                                            <label for="event_zip" class="aural-only">Zip Code Field</label>
+                                            <input type="text" id="event_zip" name="event_zip" class="form-control" placeholder="Zip Code">
+                                            <div class="input-group-btn btn-designee-search">
+                                                <button id="search_zip" type="submit" class="button btn-tertiary">Search</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                  <div id="zip_results" class="results-table hidden col-md-12">
+                                    <div id="zip_rows" class="results-rows"></div>
+                                </div>
+                                <!-- end zip table -->
+                                <p class="viewMore text-center"><button class="button viewMoreBtn" type="button">View More Results</button></p>
+                            </div>
+                        </div>
+                        <!-- end tab panes -->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div id="landingCTA" class="row">
+        <div class="col-md-3">
+            <div class="landingCTAIcon text-center"><img src="../images/content/pagebuilder/heartwalk2017-landingCTA-started.png" alt="Heart"></div>
+            <div class="landingCTAText text-center"><strong>What is Heart Walk?</strong>
+                <div>The Heart Walk is the American Heart Association's premier event for raising funds to save lives from this country's No. 1 and No. 5 killers - heart disease and stroke.</div>
+            </div>
+            <a class="button regBtn" href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Landing_Page#zipEventSearch">Get Started</a>
+        </div>
+        <div class="col-md-3">
+            <div class="landingCTAIcon text-center"><img src="../images/content/pagebuilder/heartwalk2017-landingCTA-survivor.png" alt="Starburst"></div>
+            <div class="landingCTAText text-center"><strong>Celebrating Survivors</strong>
+                <div>Heart disease and stroke survivors are an important part of our Heart Walks. Each survivor receives a red ball cap and have the opportunity to gather with other survivors.</div>
+            </div>
+            <a class="button" href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Survivors">I&#8217;m a Survivor</a>
+        </div>
+        <div class="col-md-3">
+            <div class="landingCTAIcon text-center"><img src="../images/content/pagebuilder/heartwalk2017-landingCTA-national.png" alt="A team"></div>
+            <div class="landingCTAText text-center"><strong>What&#8217;s a National Team?</strong>
+                <div>National Company Teams are companies that have committed to participate in the Heart Walk across their organizations and set a company-wide fundraising goal!</div>
+            </div>
+            <a class="button" href="https://heartchallenge.heart.org/national-teams">National Teams</a>
+        </div>
+        <div class="col-md-3">
+            <div class="landingCTAIcon text-center"><img src="../images/content/pagebuilder/heartwalk2017-landingCTA-local.png" alt="TWo people"></div>
+            <div class="landingCTAText text-center"><strong>Get Moving as a Team</strong>
+                <div>Don&#8217;t go at it alone! Create a team with your friends and family at your local Heart Walk! Together, you can fundraise and help fight heart disease and stroke.</div>
+            </div>
+            <a class="button regBtn" href="https://www2.heart.org/site/SPageServer/?pagename=HeartWalk_Landing_Page#zipEventSearch">Start a Team</a>
+        </div>
+    </div>
+</div>
+
+<div class="register-lightbox-container hidden"></div>
+
+
+<style>
+    .results-container .button {
+        width: 100%;
+    }
+    .results-container .row {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .button[hidden] {
+        display: none !important;
+    }
+    .d-none {
+        display: none !important;
+    }
+    #eventSearch .event-search-container {
+        background-image: url(../images/content/pagebuilder/heartwalk2017-donate-background.png);
+        background-position: top left;
+        background-repeat: no-repeat;
+        padding-top: 90px;
+        padding-bottom: 40px;
+    }
+    #eventSearch input, #eventSearch select {
+        height: 70px;
+        padding: .5em 1em !important;
+        color: #888;
+        border: 1px solid #aaa;
+        vertical-align: bottom;
+        /* width: 100%; */
+        max-height: none;
+        max-width: 100%;
+
+    }
+    #eventSearch .results-container {
+        margin-top: 2.5em;
+        margin-bottom: 1em;
+    }
+    #eventSearch h2 {
+        margin-bottom: 1em;
+    }
+    #eventSearch .form-group-divider {
+        line-height: 70px;
+        margin: 0;
+        font-size: 24px;
+    }
+    .row.no-gutters {
+        margin-right: 0;
+        margin-left: 0;
+    }
+    .row.no-gutters > .col, .row.no-gutters > [class*="col-"] {
+        padding-right: 0;
+        padding-left: 0;
+    }
+    #eventSearch .js__zip-search .button, #eventSearch .js__state-search .button {
+        margin-left: 0;
+        height: 55px;
+        border-radius: 0;
+    }
+    #eventSearch input#zip {
+        border-radius: 0px;
+        max-width: 75%;
+    }
+    #eventSearch #fr_event_state {
+        border-radius: 0px !important;
+    }
+    #eventSearch .js__state-search .button {
+        border-radius: 6px;
+        max-width: 100%;
+    }
+    #eventSearch .js__state-search div[class*='col-'] {
+        padding: 0 5px 0 0 !important;
+    }
+    #eventSearch .form-control {
+        font-size: 24px;
+        height: 70px;
+        border-radius: 0;
+    }
+    .js__zip-search button.search-submit {
+        height: 70px;
+        background: #c11d20;
+        /* width: 90px; */
+        color: white;
+        border-radius: 0;
+        border-color: #c11d20;
+        padding: 16px;
+        border: none;
+    }
+    .js__zip-search button.search-submit svg {
+        fill: white;
+        max-width: 35px;
+    }
+    #eventSearch .event-state-select-container:after {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 600;
+        content: "\f078";
+        color: #fff;
+        background-color: #c10e21;
+        right: 0;
+        top: 0;
+        height: 70px;
+        padding: 1rem 0;
+        position: absolute;
+        pointer-events: none;
+        border-radius: 0;
+        text-align: center;
+        width: 100%;
+        font-size: 30px;
+        max-width: 25%;
+        display: block;
+    }
+    @media screen and (max-width:700px) {
+        #eventSearch .event-search-container {
+            padding-top: 1em;
+            padding-bottom: 1em;
+        }
+        #eventSearch .form-control {
+            font-size: 20px;
+            height: 50px;
+        }
+        #eventSearch .event-state-select-container:after {
+            height: 50px;
+            font-size: 30px;
+            padding: 10px;
+            line-height: 30px;
+        }
+        .js__zip-search button.search-submit {
+            height: 50px;
+            padding: 10px;
+        }
+        .js__zip-search button.search-submit svg {
+            height: 28px;
+        }
+        #eventSearch .form-group-divider {
+            line-height: 1em;
+            margin: 0 0 .5em;
+        }
+        #eventSearch .results-container {
+            margin-top: 1em;
+        }
+    }
+</style>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
+
+
+      
+<div class="container-fluid">
+<!-- <div id="landingSponsor" class="row">
+<div class="col-xs-12 text-center">
+<h2>Thank You to Our National Sponsor</h2>
+<p>Sponsored nationally by<br />SUBWAY&reg; restaurants.<br /><img src="../images/content/pagebuilder/heartwalk2017-landing-subway.png" alt="Subway Logo" /><br />SUBWAY&reg; is a Registered Trademark of<br />Subway IP Inc. &copy;2017 IP Inc.</p>
+</div>
+</div> -->
+</div>
+</div>
+<p>
+<style>
+ul.social-icons li:not(.sf-love) a {
+	text-decoration: none;
+}
+</style>
+<script type="text/javascript">
+    // FOOTER OPTIONS - - - - - - - - - - - - - - -
+    // Set to show AHA dual logo
+    var showDualLogo = false;
+    // Set to true if need to inject Twitter Bootstrap
+    var ahaFooterLoadBootstrap = true;
+    // Set to false to override private policy banner
+    var showAHAPrivacyPolicyBanner = false;
+
+
+var scriptTag = document.getElementById('footerScriptTag');
+var isInfoBlock = typeof footer_info_Object != "undefined" && footer_info_Object.length > 0;
+var infoBlock = '';
+var contactBlock = '';
+
+// START CONTACT BLOCK * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+if (typeof footer_contact == 'undefined' || footer_contact == ''){
+	//Default contact info for AHA
+var contactBlockDefault = '<div><div class="heading">National Center</div><p class="address"><span>7272 Greenville Ave.</span><span>Dallas, TX 75231</span></p></div><div><div class="heading">Customer Service</div><p class="address"><span>1-800-AHA-USA-1</span><span>1-800-242-8721</span><a href="http://www.heart.org/HEARTORG/localization/chooseState.jsp" class="text-underline">Local Info</a><br/><a class="text-underline" href="http://www.heart.org/HEARTORG/General/Contact-Us_UCM_308813_Article.jsp">Contact Us</a></p></div>';
+	contactBlock = contactBlockDefault;
+}else {
+//Custom
+
+	if (footer_contact.length > 0){
+		for (var j = 0; j < footer_contact.length; j ++){
+            contactBlock += '<div>' +
+                '<div class="heading">'+footer_contact[j]["header"]+'</div>' +
+                '<p class="address"><span>'+footer_contact[j]["body"]+'</span></p>' +
+                '</div>';
+		}
+	}
+}
+//END CONTACT BLOCK * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+var ahaLogoPath = '';
+
+if(typeof showDualLogo == 'undefined') var showDualLogo = false;
+
+(showDualLogo == true) ? ahaLogoPath = '//static.heart.org/ahaanywhere/responsive/img/aha_dual_logo@2x.png' : ahaLogoPath = '//static.heart.org/ahaanywhere/responsive/img/AHALogo_full_red_blk@2x.png';
+
+// Updated: 4/12/2016
+// Desc: Revised injection of Bootstrap
+var ahaFooterLoadBootstrap;
+var links = document.getElementsByTagName('link');
+if(typeof ahaFooterLoadBootstrap != 'undefined' && ahaFooterLoadBootstrap == true){
+	for(var i = 0 ; i < links.length;i++){
+
+		// Only grab the link tag with href attribute
+		if(links[i].getAttribute("href")){
+
+			if(links[i].getAttribute("href").indexOf('bootstrap') != -1 ){
+				ahaFooterLoadBootstrap = false;
+				break;
+			}
+		}
+	}
+	// Load Bootstrap
+	if(ahaFooterLoadBootstrap){
+		document.write('<link rel="stylesheet" id="aha-footer-bootstrap" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css" media="all">');
+	}
+}//end if
+// * * * * * * * * * * * * *
+
+var addInfoBlock = function(obj,info_class){
+	var str = '';
+	if(obj && typeof obj != "undefined"){
+		str += '<span class="'+info_class+'">';
+		var isLink = obj.link && typeof obj.link != "undefined";
+		str += isLink ? '<a href="'+obj.link+'">' : '';
+		if(obj.content && typeof obj.content != "undefined"){
+			str += obj.content;
+		}
+		str += isLink ? '</a>' : '';
+		str += '</span>';
+	}
+	return str;
+};
+if(isInfoBlock){
+	infoBlock= '<div class="info-row custom-contact"> <div class="container"> <div class="row"> ';
+	var col = 'col-sm-'+Math.ceil(12/footer_info_Object.length);
+	for(var i = 0 ; i < footer_info_Object.length;i++){
+		var obj = footer_info_Object[i];
+		infoBlock += '<div class="'+col+'">';
+		infoBlock += addInfoBlock(obj.header,'info-header');
+		infoBlock += addInfoBlock(obj.body,'info-body');
+		infoBlock += '</div>';
+	}
+	infoBlock += '</div> </div> </div>';
+}
+document.write('<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css" media="all">');
+document.write('<link rel="stylesheet" href="//static.heart.org/ahaanywhere/responsive/css/aha-footer-external-responsive.v2.css" type="text/css" media="all">');
+//document.write('<link rel="stylesheet" href="css/aha-footer-external-responsive.v2.css" type="text/css" media="all">');//local
+if(document.getElementsByTagName('html') != null && document.getElementsByTagName('html')[0] != null && document.getElementsByTagName('html')[0].getAttribute("class") != null && document.getElementsByTagName('html')[0].getAttribute("class").indexOf('lt-ie9') != -1 && document.getElementById('ieStyleSheet') == null)
+	document.write('<link rel="stylesheet" href="//static.heart.org/ahaanywhere/responsive/css/lt-ie9.css" type="text/css" media="all">');
+var ahaBottomBar;
+ahaBottomBar = '<div id="preFooter"><div class="container"><div class="row"><div class="col-xs-12 text-center"><a class="button footerWarning" href="http://www.heart.org/HEARTORG/Conditions/911-Warnings-Signs-of-a-Heart-Attack_UCM_305346_SubHomePage.jsp">WARNING SIGNS</a></div></div></div></div><footer class="copyright-divider hidden-print" role="contentinfo"> <!-- MAIN -->'+infoBlock+'<div id="footer-main" class=""> <div class="container "> <div class="row"> <div class="col-md-2 col-sm-2 col-xs-12 hidden-xs hidden-sm"><div class="row"><div class="footer_logo footer_logo col-xs-6 col-sm-6 col-md-12"><a href="http://www.heart.org"><img src="'+ ahaLogoPath +'" alt="Go back to Heart.org"></a></div><div class="col-xs-6 col-sm-12 col-md-12"> '+contactBlock+' </div></div></div><div class="col-md-10 col-sm-10 col-xs-12 hidden-xs hidden-sm"> <div class="row"> <div class="col-md-3 col-sm-3 text-left"> <div class="heading">About Us</div> <ul class="list-unstyled menu"><li class="menu-item"> <a href="http://www.heart.org/HEARTORG/General/About-Us---American-Heart-Association_UCM_305422_SubHomePage.jsp">About the AHA/ASA</a></li><li class="menu-item"> <a href="https://www.heart.org/-/media/files/about-us/annual-report/american-heart-association-annual-report-for-2018-2019.pdf?la=en&hash=2BFC3195D998C960CFC7C186FFE0B1AC82513ECA">Annual Report</a> </li><li class="menu-item"> 	<a href="http://www.heart.org/HEARTORG/General/AHA-Financial-Information_UCM_303567_Article.jsp#.WHAHrk2Qy71">AHA Financial Information</a> </li><li class="menu-item"> <a href="http://careers.heart.org">Careers</a> </li> <li class="menu-item"> <a href="http://www.shopheart.org/?a=16-1213-AHA-Heart-Bottom-Nav&utm_source=website&utm_campaign=bottom-nav&utm_medium=referral&utm_content=16-1213-AHA-Heart-Bottom-Nav">SHOP</a> </li><li class="menu-item"> <a href="http://www.heart.org">Latest Heart and Stroke News</a> </li> <li class="menu-item"> <a href="http://newsroom.heart.org/">AHA/ASA Media Newsroom</a> </li><li class="menu-item"><a href="http://www.heart.org/HEARTORG/General/Global-Programs_UCM_479848_SubHomePage.jsp">Global Programs</a></li> </ul> </div> <div class="col-md-3 col-sm-3 text-left"> <div class="heading">Our Sites</div> <ul class="list-unstyled menu"> <li class="menu-item"> <a href="http://www.heart.org">American Heart Association</a> </li> <li class="menu-item"> <a href="http://www.strokeassociation.org/STROKEORG">American Stroke Association</a> </li> <li class="menu-item"> <a href="http://professional.heart.org/">Professional Heart Daily</a> </li> <li class="menu-item"> <a href="http://www.heart.org/HEARTORG/General/Website-Directory_UCM_473873_SubHomePage.jsp">More Sites</a> </li></ul> </div> <div class="col-md-3 col-sm-3 text-left"> <div class="heading">Take Action</div> <ul class="menu list-unstyled"> <li class="menu-item"> <a href="http://www.yourethecure.org">Advocate<span class="sr-only"> for Heart.org </span></a> </li> <li class="menu-item menu-item-donate"> <a href="https://donatenow.heart.org">Donate</a> </li><li class="menu-item"> <a href="http://www.heart.org/HEARTORG/Giving/WillsTrustsandAnnuities/Charitable-Estate-Planning_UCM_486619_SubHomePage.jsp">Planned Giving</a> </li> <li class="menu-item"> <a href="http://www.heart.org/HEARTORG/volunteer/volunteerForm.jsp">Volunteer</a> </li></ul> </div> <div class="col-md-3 col-sm-3 text-left"> <div class="heading">Online Communities</div> <ul class="menu list-unstyled"> <li class="menu-item"> <a href="http://myafibexperience.org">AFib Support</a> </li><li class="menu-item"> <a href="http://gardencommunity.heart.org">Garden Community</a> </li> <li class="menu-item"> <a href="http://supportnetwork.heart.org">Patient Support Network</a> </li>  <li class="menu-item"> <a href="http://networking.americanheart.org">Professional Online Network</a> </li></ul> </div> </div> </div> </div> </div> </div> <div class="social"> <div class="container"> <div class="row"> <div class="col-sm-6"> <div class="heading">Follow Us:</div> <ul class="social-icons standard list-unstyled "> <li class="twitter"> <a href="http://www.twitter.com/American_Heart" target="_blank" aria-label="Follow us on Twitter"> <span class="sr-only">Follow us on Twitter</span><i class="fa fa-twitter" aria-hidden="true"></i> <i class="fa fa-twitter" aria-hidden="true"></i> </a> </li> <li class="facebook"> <a href="https://www.facebook.com/AmericanHeart" target="_blank"> <span class="sr-only">Follow us on Facebook</span><i class="fa fa-facebook" aria-hidden="true"></i> <i class="fa fa-facebook" aria-hidden="true"></i> </a> </li> <li class="googleplus"> <a href="https://plus.google.com/+AmericanHeart" target="_blank" aria-label="Follow us on Google Plus"> <span class="sr-only">Follow us on Google Plus</span><i class="fa fa-google-plus" aria-hidden="true"></i> <i class="fa fa-google-plus" aria-hidden="true"></i> </a> </li> <li class="instagram"> <a href="http://instagram.com/american_heart" target="_blank" aria-label="Follow us on Instagram"> <span class="sr-only">Follow us on Instagram</span><i class="fa fa-instagram" aria-hidden="true"></i> <i class="fa fa-instagram" aria-hidden="true"></i> </a> </li> <li class="pinterest"> <a href="http://www.pinterest.com/americanheart/" target="_blank" aria-label="Follow us on Pinterest"><span class="sr-only">Follow us on Pinterest</span> <i class="fa fa-pinterest" aria-hidden="true"></i> <i class="fa fa-pinterest" aria-hidden="true"></i> </a> </li> <li class="youtube"> <a href="https://www.youtube.com/user/americanheartassoc" target="_blank" aria-label="Follow us on YouTube"> <span class="sr-only">Follow us on YouTube</span><i class="fa fa-youtube" aria-hidden="true"></i> <i class="fa fa-youtube" aria-hidden="true"></i> </a> </li> <li class="rss"> <a href="http://feeds.feedburner.com/awesem" target="_blank" aria-label="Follow us on RSS"> <span class="sr-only">Follow us on RSS</span><i class="fa fa-rss" aria-hidden="true"></i> <i class="fa fa-rss" aria-hidden="true"></i> </a> </li> </ul> </div> <div class="col-sm-6"></div> </div> </div> </div> <!--// OPEN #copyright //--> <div id="copyright"> <div class="container"> <div class="row"> <div class="col-sm-9 col-xs-12"> <div class="privacylinks"><strong><a href="http://www.heart.org">www.Heart.org</a></strong></div> <div class="privacylinks"> <a href="http://www.heart.org/HEARTORG/General/Privacy-Policy_UCM_300371_Article.jsp" title="Read more on privacy policy">Privacy Policy</a> | <a href="http://www.heart.org/HEARTORG/General/Copyright-Notice_UCM_300378_Article.jsp" title="Read more on copyright">Copyright</a> | <a href="http://www.heart.org/HEARTORG/General/Ethics-Policy_UCM_300430_Article.jsp" title="Read more on ethics policy">Ethics Policy</a> | <a href="http://www.heart.org/HEARTORG/General/Conflict-of-Interest-Policy_UCM_300435_Article.jsp" title="Read more on conflict of interest policy">Conflict of Interest Policy</a> | <a href="http://www.heart.org/HEARTORG/General/American-Heart-Association-and-American-Stroke-Association-Linking-Policy_UCM_303551_Article.jsp" title="Read more on linking policy">Linking Policy</a> | <a href="http://careers.heart.org" title="Read more on careers">Careers</a> | <a href="http://www.heart.org/HEARTORG/General/Supplier-Business-Information_UCM_303625_Article.jsp" title="Read more on suppliers & providers">Suppliers & Providers</a> | <a href="http://www.heart.org/HEARTORG/General/Accessibility-Statement_UCM_483473_Article.jsp" title="Read more on accessibility statement">Accessibility Statement</a> | <a href="https://www.heart.org/en/about-us/statements-and-policies/state-fundraising-notices" title="State Fundraising Notices">State Fundraising Notices</a></div>&copy;2024 American Heart Association, Inc. All rights reserved. Unauthorized use prohibited. The American Heart Association is a qualified 501(c)(3) tax-exempt organization.<br> *Red Dress&trade; DHHS, Go Red&trade; AHA; National Wear Red Day &reg; is a registered trademark. </div> </div> </div><!-- //.container --> </div><!-- //#copyright --> <!--// CLOSE #copyright //--></footer>';
+document.write(ahaBottomBar);
+
+// ECC Site Down Banner - - - - - - - - - - - - - - - - - - - - - -
+var showECCMaintenanceBanner = false;
+
+if(showECCMaintenanceBanner){
+
+
+	var domainURL = String(window.location.hostname);
+
+	//QA
+	//var eccDomainArr = ["ahainstructornetworkqa.americanheart.org"];
+	//PROD
+	var eccDomainArr = ["ahainstructornetwork.americanheart.org","ahainstructornetwork.org","cpr.heart.org"];
+
+	for(var j = 0; j < eccDomainArr.length; j++){
+		if(eccDomainArr[j] == domainURL){
+			//MATCH
+			//CREATE BANNER
+			var downMessage = "This site will be down for maintenance on Wednesday, March 22, at 9:00 p.m., Central Time, for approximately 2 hours. Please plan accordingly.";
+			var _div = document.createElement('div');
+			_div.id = 'eccDownBannerWrapper';
+
+			_div.innerHTML =
+				' <div id="eccDownBanner" class="alert alert-warning" role="alert" style="margin:0">' +
+				'<div class="container">' +
+				//'<span><img src="//static.heart.org/ahaanywhere/images/alert.png" alt="alert icon" width="20" height="19"/>' + downMessage + '</span>' +
+				'<a class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></a>' +
+				'<span style="color:#222;">' + downMessage + '</span>' +
+				'</div>' +
+				'</div>';
+
+			document.body.insertBefore(_div, document.body.firstChild.nextSibling);
+
+		}//end if
+	} //end for
+}//end if
+//End ECC Site Down Banner - - - - - - - - - - - - - - - - - -
+
+
+</script>
+
+<style>
+
+/* ==========================================================================
+MAIN STYLES
+LAST UPDATED: 05.31.2017
+===========================================================================*/
+
+/* TABLE OF CONTENTS
+01. NORMALIZE
+02. GRID
+03. BASE STYLES
+04. TYPOGRAPHY
+05. LINKS
+06. BUTTONS
+07. LISTS
+08. TABLES
+09. UTILITIES
+10. FOOTER
+*/
+
+
+/*-----------------------------------------------------------------------------------*/
+/*  01: NORMALIZE
+/*-----------------------------------------------------------------------------------*/
+*, *::after, *::before {
+  box-sizing: border-box;
+}
+/*img,legend{border:0}legend,td,th{padding:0}html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section,summary{display:block}audio,canvas,progress,video{display:inline-block;vertical-align:baseline}audio:not([controls]){display:none;height:0}[hidden],template{display:none}a{background-color:transparent}a:active,a:hover{outline:0}abbr[title]{border-bottom:1px dotted}b,optgroup,strong{font-weight:700}dfn{font-style:italic}h1{font-size:2em;margin:.67em 0}mark{background:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-.5em}sub{bottom:-.25em}svg:not(:root){overflow:hidden}figure{margin:1em 40px}hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}pre,textarea{overflow:auto}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}button,input,optgroup,select,textarea{color:inherit;font:inherit;margin:0}button{overflow:visible}button,select{text-transform:none}button,html input[type=button],input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer}button[disabled],html input[disabled]{cursor:default}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}input{line-height:normal}input[type=checkbox],input[type=radio]{box-sizing:border-box;padding:0}input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{height:auto}input[type=search]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration{-webkit-appearance:none}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}table{border-collapse:collapse;border-spacing:0} */
+
+/*-----------------------------------------------------------------------------------*/
+/*  02: GRID
+/*-----------------------------------------------------------------------------------*/
+#preWrapper .container {
+    width: 100%;
+    padding: 0;
+}
+
+@media (min-width: 768px) {
+  footer .container, #mainWrapper .container, #headerWrapper .container, #preFooter .container {
+      width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  footer .container, #mainWrapper .container, #headerWrapper .container, #preFooter .container {
+      width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  footer .container, #mainWrapper .container, #headerWrapper .container, #preFooter .container {
+      width: 1000px;
+  }
+}
+
+.content {margin-bottom: 60px;}
+
+/*-----------------------------------------------------------------------------------*/
+/*  03: BASE STYLES
+/*-----------------------------------------------------------------------------------*/
+/* NOTE
+html is set to 62.5% so that all the REM measurements throughout Skeleton
+are based on 10px sizing. So basically 1.5rem = 15px :) */
+
+html {
+  font-size: 62.5%;
+}
+body {
+  font-size: 1.8rem;
+  line-height: 1.6;
+  font-weight: normal;
+  font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-style: normal;
+  color: #000000;
+  /*  margin:0; */
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*  04: TYOGRAPHY
+/*-----------------------------------------------------------------------------------*/
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+h1 { font-size: 4.0rem; line-height: 1.2; color: #333333; font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;;font-weight: normal;}
+h2 { font-size: 3.2rem; line-height: 1.2; color: #333333; font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;;font-weight: normal;}
+h3 { font-size: 2.2rem; line-height: 1.2; color: #333333; font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;;font-weight: 600;}
+h4 { font-size: 2.0rem; line-height: 1.35;}
+h5 { font-size: 1.8rem; line-height: 1.5;}
+h6 { font-size: 1.5rem; line-height: 1.6;}
+.small-h1 h1 {
+  font-size: 2.8rem;
+}
+/* Larger than phablet */
+@media (min-width: 550px) {
+  h1 { font-size: 4.8rem; }
+  h2 { font-size: 3.6rem; }
+  h3 { font-size: 2.2rem; }
+  h4 { font-size: 2rem; }
+  h5 { font-size: 1.8rem; }
+  h6 { font-size: 1.4rem; }
+  .small-h1 h1 {font-size: 4rem;}
+}
+p {
+  margin: 0 0 2.5rem;
+}
+P, LI, OL, UL, TABLE, TR, TH, TD, .Explicit {
+  font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-style: normal;
+  color: #000000;
+  font-size: 1.8rem;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*  05: LINKS + TOP MENU
+/*-----------------------------------------------------------------------------------*/
+a, A:link, div.responsive a:visited, div.responsive a:link {
+  color: #C10E21;
+  text-decoration: underline;
+}
+a:hover, A:hover {
+  color: #7a0b0c;
+}
+
+#aboutMenuBtn {
+    background-color: transparent;
+    border: 0;
+    color: #000;
+    cursor: pointer;
+    display: block;
+    line-height: 1;
+    padding: 0;
+    position: relative;
+    text-align: center;
+    z-index: 1;
+    font-size: 1.8rem;
+}
+
+.additionalHeaderLinks a, .aboutBtn {
+    color: #000000;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    padding:0 0 0 40px;
+    font-size: 1.8rem;
+    line-height: 45px;
+}
+.additionalHeaderLinks a:hover, .aboutBtn:hover {
+    color: #C10E21;
+}
+
+#aboutMenuBtn .fa {
+  font-weight: bold;
+}
+
+.additionalHeaderLinks a.button {
+    padding: 0 20px;
+}
+.additionalHeaderLinks a.button:hover {
+    color: #ffffff;
+}
+/*-----------------------------------------------------------------------------------*/
+/*  06: BUTTONS & HEADER FORMATING
+/*-----------------------------------------------------------------------------------*/
+
+.button {
+    background-color: #C10E21;
+    border: 1px solid #C10E21;
+    color: white;
+    padding: 0px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    right: 0;
+    line-height: 43px;
+    font-size: 20px;
+    height: 45px;
+  }
+
+a.button {
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    vertical-align: top;
+}
+
+a.button.reverseBtn {
+    background: none;
+    border: 2px solid #666666;
+    color: #666666;
+}
+
+.loggedout a.button {
+  background-color: #e8e8e8;
+  border: 1px solid #c6c6c6;
+  border-top: 0;
+  height: 30px;
+  line-height:30px;
+  font-size: 1.6rem;
+}
+.loggedout a.button:hover {
+  background-color: #c6c6c6;
+}
+.loggedout a.button , .loggedout a.button:hover, .loggedout a.button:active, .loggedout a.button:visited, .loggedout a.button:link {
+  color: #000000;
+  text-decoration: none;
+}
+
+.desktopLogoMenu {
+  font-size:0;
+}
+
+.logoMenu {
+    display: inline-block;
+    vertical-align: bottom;
+    float: none;
+}
+
+@media (max-width: 991px) {
+  .ahalogo-noborder {
+      padding-top: 25px;
+  }
+}
+
+.ahalogo-noborder {
+    padding-bottom: 25px;
+    max-width: 100%;
+}
+
+.loggedin {
+    font-size: 1.4rem;
+    background-color: #f8f8f8;
+    padding: 5px 10px;
+    border-right: 1px solid #c6c6c6;
+    border-left: 1px solid #c6c6c6;
+    border-bottom: 1px solid #c6c6c6;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*  09: UTILITIES
+/*-----------------------------------------------------------------------------------*/
+
+.hidden {display: none;}
+.no-padding {padding: 0;}
+img.pull-left {margin: 0 20px 20px 0;}
+@media only screen and (max-width: 767px) {
+  img.pull-left {
+    float: none!important;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* lightbox */
+.register-lightbox-container {
+  background: #ffffff none repeat scroll 0 0;
+  border-radius: 10px;
+  padding: 30px 60px 10px;
+}
+.register-lightbox-container .button {
+  display: block;
+  margin: 30px auto;
+  max-width: 550px;
+  text-align: center;
+}
+.register-lightbox-container .close {
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+/* end api buttons */
+
+
+@media only screen and (min-width: 0px) and (max-width: 479px) {
+    .cd-intro {
+        min-height: 100px;
+    }
+    .cd-intro .cd-headline {
+        max-width: 100% !important;
+    }
+}
+
+.cd-title {
+    position: relative;
+    height: 160px;
+    line-height: 230px;
+    text-align: center;
+}
+
+.cd-title h3 {
+    font-size: 2.4rem;
+    font-weight: 700;
+}
+
+@media only screen and (min-width: 768px) {
+    .cd-title {
+        line-height: 250px;
+    }
+}
+
+@media only screen and (min-width: 1170px) {
+    .cd-title {
+        height: 200px;
+        line-height: 300px;
+    }
+    .cd-title h3 {
+        font-size: 3rem;
+    }
+}
+
+.cd-headline {
+    font-size: 4rem;
+    line-height: 1.2;
+    height:90px;
+    color: #ffffff;
+    margin-bottom: 0;
+}
+
+@media only screen and (min-width: 768px) {
+    .cd-headline {
+        font-size: 6rem;
+        font-weight: 400;
+        height:120px;
+    }
+}
+
+@media only screen and (min-width: 1170px) {
+    .cd-headline {
+        font-size: 8rem;
+    }
+}
+
+.cd-words-wrapper {
+    display: inline-block;
+    position: relative;
+    text-align: left;
+    border-bottom: 2px solid white;
+    min-height: 80px;
+}
+
+@media only screen and (min-width: 0px) and (max-width: 479px) {
+    .cd-words-wrapper {
+        min-height: 20px;
+        border-bottom-width: 3px;
+    }
+}
+
+.cd-words-wrapper b {
+    display: inline-block;
+    position: absolute;
+    white-space: nowrap;
+    left: 0;
+    top: 0;
+    font-weight: 400;
+}
+
+.cd-words-wrapper b.is-visible {
+    position: relative;
+}
+
+.no-js .cd-words-wrapper b {
+    opacity: 0;
+}
+
+.no-js .cd-words-wrapper b.is-visible {
+    opacity: 1;
+}
+
+.cd-headline.type .cd-words-wrapper {
+    vertical-align: top;
+    overflow: hidden;
+}
+
+.cd-headline.type .cd-words-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    bottom: auto;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+    height: 90%;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.cd-headline.type .cd-words-wrapper.waiting::after {
+    -webkit-animation: cd-pulse 1s infinite;
+    -moz-animation: cd-pulse 1s infinite;
+    animation: cd-pulse 1s infinite;
+}
+
+.cd-headline.type .cd-words-wrapper.selected {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.cd-headline.type .cd-words-wrapper.selected::after {
+    visibility: hidden;
+}
+
+.cd-headline.type .cd-words-wrapper.selected b {
+    color: #fff;
+}
+
+.cd-headline.type b {
+    visibility: hidden;
+}
+
+.cd-headline.type b.is-visible {
+    visibility: visible;
+}
+
+.cd-headline.type i {
+    position: absolute;
+    visibility: hidden;
+    font-style: normal;
+}
+
+.cd-headline.type i.in {
+    position: relative;
+    visibility: visible;
+}
+
+.cd-intro.animated {
+    padding-top: 90px;
+}
+a.reasonArrow.regBtn {
+    color: #ffffff;
+    cursor: pointer;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*  10: FOOTER
+/*-----------------------------------------------------------------------------------*/
+
+#preFooter {
+    background-color: #fcf8dd;
+    color: #3d3d3d;
+    font-size: 12px;
+}
+
+#preFooter .col-xs-12 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.social {padding-top: 20px;}
+
+@media only screen and (max-width: 991px) {
+  .social {border-top:0;padding-top: 0}
+  #footer-main {border-bottom: 0;}
+}
+
+footer .menu li > a {
+    font-size: 12px;
+    text-decoration: underline;
+    font-weight: 600;
+}
+#copyright {
+    padding: 15px 0 80px;
+}
+
+a.button.footerWarning {
+    font-size: 14px;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    color: #606060;
+    background-image: -webkit-linear-gradient(top, #ffffff, #eeeeee);
+    background-image: -moz-linear-gradient(top, #ffffff, #eeeeee);
+    background-image: -ms-linear-gradient(top, #ffffff, #eeeeee);
+    background-image: -o-linear-gradient(top, #ffffff, #eeeeee);
+    background-image: linear-gradient(to bottom, #ffffff, #eeeeee);
+    -webkit-border-radius: 5;
+    -moz-border-radius: 5;
+    border-radius: 5px;
+    height: auto;
+    line-height: 34px;
+}
+
+footer a, footer A:link {
+    color: #3d3d3d;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*  11: SIDENAV
+/*-----------------------------------------------------------------------------------*/
+
+.sidenav {
+  width: 300px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  right: -300px;
+  background-color: #de2427;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+  height: 100%;
+}
+
+.sidenav a {
+  padding: 4px 8px 4px 32px;
+  text-decoration: underline;
+  font-size: 1.8rem;
+  color: #ffffff;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover, .offcanvas a:focus{
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+  text-decoration: none;
+}
+
+.pushit {
+  -moz-transition: all 300ms;
+  -o-transition: all 300ms;
+  -webkit-transition: all 300ms;
+  transition: all 300ms;
+}
+
+body.pushActive .pushit {
+    -moz-transform: translateX(-300px);
+    -ms-transform: translateX(-300px);
+    -webkit-transform: translateX(-300px);
+    transform: translateX(-300px);
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+
+/*-----------------------------------------------------------------------------------*/
+/*  12: HOME LANDING
+/*-----------------------------------------------------------------------------------*/
+#landingEventSearch {
+    background-image: url(../images/content/pagebuilder/heartwalk2017-donate-background.png );
+    background-position: bottom left;
+    background-repeat: no-repeat;
+    padding-top: 90px;
+}
+#landingEventSearch h2, #landingTriSearch h2 {
+  font-size: 4.0rem;
+}
+.homeLandingStrip {
+    height: 5px;
+}
+.homeLandingStrip.internal {
+  background-image: url(../images/content/pagebuilder/internal-banner-1170X200-v2.jpg);
+  background-position-x: center;
+  background-repeat: no-repeat;
+  height: 200px;
+  padding: 0;
+}
+
+.homeLandingStrip.internal img {
+    display: none;
+}
+
+
+.homeLandingImg {
+    background-color:#000000;
+    background-image: url(../images/content/pagebuilder/landing-banner-1600X350-v3.jpg);
+    background-size: cover;
+    text-align: center;
+    height: 350px;
+    background-position-x: center;
+    font-size: 24px;
+}
+.cd-intro h1 {
+  color: #ffffff;
+  font-size:4.0rem;
+}
+@media screen and (max-width: 768px) {
+  .cd-intro h1 {
+    font-size:3.0rem;
+  }
+}
+.landingPageCarrot {
+    font-size: 9rem;
+    line-height: 1;
+    color: #ffffff;
+}
+
+@media screen and (max-width: 768px) {
+  .homeLandingStrip.internal {
+    padding: 0;
+    background-size: contain;
+    height: auto;
+  }
+  .homeLandingStrip.internal img {
+      display: block;
+      max-width: 100%;
+  }
+  .homeLandingImg {
+      height: auto;
+  }
+  .cd-intro.animated {
+      padding-top: 10px;
+      padding-bottom: 1px;
+  }
+  .cd-intro h1 {
+    font-size:3.0rem;
+  }
+  .cd-headline {
+      height: auto;
+      font-size: 4rem;
+  }
+  .cd-words-wrapper {
+      min-height: 0;
+  }
+  .landingPageCarrot {
+      display: none;
+  }
+  #landingEventSearch {
+      padding-top: 30px;
+  }
+}
+
+.eventSearchComponent {
+    margin-bottom: 60px;
+    margin-top: 40px;
+}
+.register-lightbox-container {
+    background: #ffffff none repeat scroll 0 0;
+    border-radius: 10px;
+    padding: 30px 60px 10px;
+}
+@media screen and (max-width: 768px) {
+  .btn-designee-search {
+      display: block;
+      clear: both;
+      width: 100%;
+  }
+  .btn-designee-search .button {
+      width: 100%;
+  }
+}
+button#zipSubmit {
+    height: 55px;
+    line-height: 55px;
+    cursor: pointer;
+    vertical-align: bottom;
+}
+#futureEvents a.button {
+  width: 100%;
+}
+#futureEvents .row {
+  margin-top:60px;
+  margin-bottom: 60px;
+}
+#landingTriSearch {
+  background-color: #eeeeee;
+  padding-top: 50px;
+  border-top: 1px dashed #666666;
+  border-bottom: 1px dashed #666666;
+}
+#inputZip {
+  height: 55px;
+  padding: 10px;
+  color: #666;
+  border: 1px solid #aaa;
+  vertical-align: bottom;
+  width: 240px;
+}
+@media (max-width: 992px) {
+  #inputZip, button#zipSubmit {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+.input-group div {
+  padding-left: 0;
+  padding-right: 0;
+}
+@media (min-width: 992px) {
+  .input-group div {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+#pastEventListContainer {
+    padding-top: 40px;
+}
+#landingEventVirtual {
+  margin-top: 40px;
+  margin-bottom: 60px;
+}
+.triSearchHeader {
+  margin-bottom: 45px;
+}
+#participant_first_name, #participant_last_name, #team_name, #event_zip {
+  height: 55px;
+  font-size: 2.2rem;
+}
+@media only screen and (max-width: 767px) {
+  #participant_first_name, #participant_last_name, #team_name, #event_zip {
+      font-size: 1.8rem;
+  }
+}
+.input-group-btn .button {
+  height: 55px;
+}
+#participantSearch, #teamSearch, #eventSearch {
+    padding: 20px 0;
+    background: #fff;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    overflow: auto;
+    margin-bottom: 60px;
+}
+ul.nav.nav-tabs {
+    background-color: #e8e8e8;
+    border-top: 1px solid #d4d4d4;
+    border-right: 1px solid #d4d4d4;
+    border-left: 1px solid #d4d4d4;
+    border-bottom: 0;
+}
+.nav>li>a {
+  padding: 5px 15px;
+  font-size: 2.4rem;
+  text-decoration: none;
+  color: #666666;
+}
+@media only screen and (max-width: 767px) {
+  .nav>li>a {
+    font-size: 1.8rem;
+  }
+}
+.nav-tabs>li>a {
+    border-radius: 0;
+}
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+}
+.nav-tabs>li>a:hover {
+    border-bottom: 1px solid white;
+    color: #666666;
+}
+.results-rows .row {
+  margin-top: 65px;
+  margin-bottom: 65px;
+}
+.team_results_name {
+    font-weight: bold;
+}
+@media only screen and (max-width: 767px) {
+  #participant_rows a.button, #team_rows a.button, #zip_rows a.button {
+    width: 100%;
+  }
+}
+#landingCTA {
+  padding-top: 55px;
+  padding-bottom: 55px;
+}
+#landingCTA .button {
+  width: 100%;
+}
+.landingCTAText div {
+    padding-top: 25px;
+    font-size: 1.6rem;
+    padding-bottom: 30px;
+}
+@media only screen and (max-width: 991px) {
+  #landingCTA .col-md-3 {
+      margin-top: 30px;
+  }
+}
+#landingSponsor {
+  padding-top: 55px;
+  padding-bottom: 55px;
+  border-top: 1px dashed #666;
+}
+#landingSponsor img {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#landingSponsor p {
+    margin: 0;
+    font-size: 1.2rem;
+    line-height: 1.2;
+}
+@media (min-width: 992px) {
+  .landingCTAText {
+      height: 270px;
+  }
+}
+
+#participant_rows .row:nth-child(9) ~ .row, #team_rows .row:nth-child(9) ~ .row, #zip_rows .row:nth-child(9) ~ .row, #futureEvents .row:nth-child(5) ~ .row {
+    display: none;
+}
+
+.showAll #participant_rows .row:nth-child(9) ~ .row, .showAll #team_rows .row:nth-child(9) ~ .row, .showAll #zip_rows .row:nth-child(9) ~ .row, .showAll #futureEvents .row:nth-child(5) ~ .row {
+    display: block;
+}
+
+.viewMore {
+    display: none;
+}
+.haveResults .viewMore {
+    display: block;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*  13: NATIONAL TEAMS
+/*-----------------------------------------------------------------------------------*/
+
+.natTeamsHeadBtns .col-md-10 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.natTeamsHeadBtns {
+  margin-bottom: 30px;
+  background-color: #ebebeb;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+a.button.topNatTeamsBtn {
+    background: none;
+    border: 2px solid #666666;
+    color: #666666;
+    line-height: 43px;
+}
+
+.natTeamsHeadBtns a {
+  height: auto;
+  line-height: initial;
+  padding: 10px 5px;
+}
+
+.natTeamsWideBtns a {
+  width: 100%;
+}
+
+.natTeamsLogoBed a {
+    width: 100%;
+    height: auto;
+    line-height: initial;
+    padding: 10px 5px;
+}
+
+.natTeamsLogoBed img {
+    height: auto;
+    margin-bottom: 40px;
+    max-width: 200px;
+    max-height: 200px;
+}
+.natTeamsLogoBed img.onefifty {
+  max-width: 150px;
+  max-height: 150px;
+}
+.natTeamsLogoBed img.ninety {
+  max-width: 90px;
+  max-height: 90px;
+}
+.natTeamsLogoBed div div div div {
+  min-height: 130px;
+}
+
+/*@media (min-width: 767px) {
+.natTeamsLogoBed img {width:100%;}
+}*/
+
+.natTeamsLogoBed {
+    margin-top: 50px;
+}
+.natTeamsLogoBed .col-sm-4 div {
+    text-align: center;
+}
+.natTeamsLogoBed .col-sm-12 .col-sm-4 {
+    padding: 30px;
+    border-right: 1px solid #a3a3a3;
+}
+.natTeamsLogoBed .col-sm-12 .col-sm-4:last-child {
+    border: 0;
+}
+.natTeamsLogoBed .fa {
+    font-size: 36px;
+    color: #3b3b3b;
+}
+@media only screen and (min-width: 768px) {
+  .row.natTeamsWideBtns .text-center a {
+      width: auto;
+  }
+  .natTeamBtnBreak {
+    display: block;
+  }
+  .natTeamsLogoBed h2 {
+      margin-bottom: 65px;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .natTeamsHeadBtns .row .col-xs-12 {
+      margin-bottom: 20px;
+  }
+}
+
+.faScrollTop {
+    cursor: pointer;
+}
+
+/*-----------------------------------------------------------------------------------*/
+/*  14: INTERNAL
+/*-----------------------------------------------------------------------------------*/
+
+.redText {
+    color: #C10E21; 
+}
+
+.breadCrumbs {
+    margin: 35px 0;
+}
+
+@media only screen and (max-width: 767px) {
+  .breadCrumbs {
+      margin: 15px 0;
+  }
+}
+
+.homeLandingStrip.internal h1, .homeLandingStrip.internal h2 {
+  margin-bottom: 0;
+  color: #000;
+}
+
+#tr2335,#tr2411,#tr2458,#tr2335,#tr2346,#tr2458,#tr3479,#tr3477,#tr3476
+{
+    display: none;
+}
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+</style>
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/luminateExtend/1.7.1/luminateExtend.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZL2rsCFANLgFepYWTtDx18EJuBCEpehE"></script>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-592310ac241035de"></script>
+<script type="text/javascript">
+
+function openNav() {
+    if (jQuery('body').hasClass('pushActive')) {
+      jQuery('body').removeClass('pushActive');
+    }
+    else {
+      jQuery("body").addClass('pushActive');
+    }
+}
+
+//accessible menu
+var MS = {};
+
+MS.App = (function() {
+
+  var ESCAPE_CODE = 27;
+
+  var navButton = $('#aboutMenuBtn'),
+      navMenu = $('#aboutSidenav');
+      navButton2nd = $('.regBtn, .donateBtn');
+  
+  var navLinks = navMenu.find('a');
+
+  function initApp() {
+    navMenu.on('keydown', handleKeydown);
+    navButton.on('click', handleClick);
+    navButton2nd.on('click', handleClick2nd);
+    disableNavLinks();
+  }
+  function handleKeydown(event) {
+    if (event.keyCode === ESCAPE_CODE) {
+      document.body.classList.toggle('pushActive');
+      disableNavLinks();
+      navButton.focus();
+    }
+  }
+  function handleClick(event) {
+    if (document.body.classList.contains('pushActive')) {
+      document.body.classList.remove('pushActive');
+      disableNavLinks();
+    }
+    else {
+      document.body.classList.add('pushActive');
+      enableNavLinks();
+      navLinks.eq(0).focus();
+    }
+  }
+  function handleClick2nd(event) {
+    if (document.body.classList.contains('pushActive')) {
+      document.body.classList.remove('pushActive');
+      disableNavLinks();
+    }
+  }
+  function enableNavLinks() {
+    navButton.attr('aria-label', 'Learn Menu expanded');
+    navMenu.removeAttr('aria-hidden');
+    navLinks.removeAttr('tabIndex');
+  }
+  function disableNavLinks() {
+    navButton.attr('aria-label', 'Learn Menu collapsed');
+    navMenu.attr('aria-hidden', 'true');
+    navLinks.attr('tabIndex', '-1');
+  }
+
+  return {
+    init: function(){
+      initApp();
+    }
+  }
+})();
+
+$(document).ready(function($) {
+  new MS.App.init();
+});
+// end accessible menu
+
+
+jQuery(document).ready(function(){
+
+  //ACCESSIBIILTY
+  //Add Langauge
+  jQuery('html').attr('xmlns','http://www.w3.org/1999/xhtml').attr('lang','en').attr('xml:lang','en');
+
+  //Remove extra white space at end of keywords
+  str = $('meta[name=Keywords]').attr('content');
+  str = str.substring(0,str.length - 1);
+  $('meta[name=Keywords]').attr('content',str);
+
+});
+
+
+// NATIONAL TEAMS SCROLL
+jQuery(".faScrollTop").click(function() {
+    jQuery('html, body').animate({
+        scrollTop: jQuery("body").offset().top
+    }, 500);
+    jQuery('#level-btn-1').focus();
+});
+
+jQuery("#level-btn-1").click(function() {
+    jQuery('html, body').animate({
+        scrollTop: jQuery("#level-target-1").offset().top
+    }, 500);
+    jQuery('#level-target-1').parent().next().find('a:first').focus();
+});
+jQuery("#level-btn-2").click(function() {
+    jQuery('html, body').animate({
+        scrollTop: jQuery("#level-target-2").offset().top
+    }, 500);
+    jQuery('#level-target-2').parent().next().find('a:first').focus();
+});
+jQuery("#level-btn-3").click(function() {
+    jQuery('html, body').animate({
+        scrollTop: jQuery("#level-target-3").offset().top
+    }, 500);
+    jQuery('#level-target-3').parent().next().find('a:first').focus();
+});
+jQuery("#level-btn-4").click(function() {
+    jQuery('html, body').animate({
+        scrollTop: jQuery("#level-target-4").offset().top
+    }, 500);
+    jQuery('#level-target-4').parent().next().find('a:first').focus();
+});
+
+jQuery("#natTeamsGetInv").click(function(event) {
+  event.preventDefault();
+  jQuery('html, body').animate({
+      scrollTop: jQuery("#LearnMoreTeams").offset().top
+  }, 500);
+  jQuery('#LearnMoreTeamsLink').focus();
+});
+
+</script>
+
+<script>
+  (function ($) {
+    $(document).ready(function($) {
+      window.cd2 = {};
+      // BEGIN LANDING PAGES
+    /******************/
+    /* SEARCH SCRIPTS */
+    /******************/
+    var eventType = 'Heart Walk';
+    var eventType2 = $('body').data('event-type2') ? $('body').data('event-type2') : null;
+    var regType = $('body').data('reg-type') ? $('body').data('reg-type') : null;
+    var publicEventType = $('body').data('public-event-type') ? $('body').data('public-event-type') : null;
+    // var isCrossEvent = $('body').is('.pg_cn_home') ? true : false;
+    var isCrossEvent = true;
+    var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+
+    // var isProd = (luminateExtend.global.tablePrefix === 'heartdev' ? false : true);
+    var isProd = false;
+    var eventName = luminateExtend.global.eventName;
+    var srcCode = luminateExtend.global.srcCode;
+    var subSrcCode = luminateExtend.global.subSrcCode;
+    var evID = $('body').data('fr-id') ? $('body').data('fr-id') : null;
+    var consID = $('body').data('cons-id') ? $('body').data('cons-id') : null;
+
+    function getURLParameter(url, name) {
+      return (RegExp(name + '=' + '(.+?)(&|$)').exec(url) || [, null])[1];
+    }
+    var currentUrl = window.location.href;
+    var searchType = getURLParameter(currentUrl, 'search_type');
+
+    /******************************/
+    /* CROSS EVENT ROSTER SCRIPTS */
+    /******************************/
+    var eventData = [];
+    var compiledEventsData = [];
+    var compiledParticipantsData = [];
+    var compiledTeamsData = [];
+    var compiledCompaniesData = [];
+
+    var eventRosterReady = false;
+    var participantRosterReady = false;
+    var teamRosterReady = false;
+    var companyRosterReady = false;
+
+    cd2.sort = function (prop, arr) {
+      prop = prop.split('.');
+      var len = prop.length;
+
+      arr.sort(function (a, b) {
+        var i = 0;
+        while (i < len) {
+          a = a[prop[i]];
+          b = b[prop[i]];
+          i++;
+        }
+        if (a > b) {
+          return -1;
+        } else if (a < b) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+      return arr;
+    };
+    String.prototype.trunc = function (n) {
+      return this.substr(0, n - 1) + (this.length > n ? '&hellip;' : '');
+    };
+
+    Number.prototype.formatMoney = function (c, d, t) {
+      var n = this,
+        c = isNaN(c = Math.abs(c)) ? 2 : c,
+        d = d == undefined ? "." : d,
+        t = t == undefined ? "," : t,
+        s = n < 0 ? "-" : "",
+        i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))),
+        j = (j = i.length) > 3 ? j % 3 : 0;
+      return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d +
+        Math.abs(n - i).toFixed(c).slice(2) : "");
+    };
+
+    cd2.getEvents = function (eventName, eventCity, eventState, eventSort) {
+      $('.js__loading').show();
+    //   if ($('body').is('.pg_cn_home')) {
+        var numEvents = 3;
+    //   }
+      $('.js__no-event-results').addClass('d-none');
+      luminateExtend.api({
+        api: 'teamraiser',
+        data: 'method=getTeamraisersByInfo' +
+          '&name=' + (eventState ? '%25%25' : eventName) +
+          (eventState ? '&state=' + eventState : '') +
+          (eventCity ? '&city=' + eventCity : '') +
+          '&event_type=' + eventType +
+          '&response_format=json&list_page_size=499&list_page_offset=0&list_sort_column=' + (eventSort === 'city' ? 'city' : 'event_date') + '&list_ascending=true',
+        callback: {
+          success: function (response) {
+            $('.js__show-more-events, .js__show-fewer-events').attr('hidden', true);
+            if (response.getTeamraisersResponse.totalNumberResults > '0') {
+              $('.js__loading').hide();
+              $('.js__event-search-results').removeClass('d-none');
+              $('.js__past-event-search-results').removeClass('d-none');
+              var events = luminateExtend.utils.ensureArray(response.getTeamraisersResponse.teamraiser);
+
+              var todaysDate = new Date();
+              todaysDate.setDate(todaysDate.getDate() - 1);
+              var liveEventsDisplayed = 0;
+              var pastEventsDisplayed = 0;
+
+              $(events).each(function (i, event) {
+               if ((event.name).indexOf(" Test") < 0) {
+                var eventId = event.id;
+                var eventName = event.name;
+                var eventDate = luminateExtend.utils.simpleDateFormat(event.event_date,
+                  'EEEE, MMMM d, yyyy');
+                var eventTimestamp = new Date(event.event_date);
+                var eventCity = event.city;
+                var eventStateAbbr = event.state;
+                var eventStateFull = event.mail_state;
+                var eventLocation = event.location_name ? event.location_name + "<br>" : '';
+                var eventStatus = event.status;
+                var eventType = event.public_event_type_name;
+                var greetingUrl = event.greeting_url;
+                var newTeamUrl = event.reg_new_team_url;
+                var joinTeamUrl = event.reg_join_team_url;
+                var indivUrl = event.reg_indiv_url;
+                var registerUrl = 'SPageServer/?pagename=cn_register&fr_id=' + eventId + '&s_regType=';
+                var acceptsRegistration = event.accepting_registrations;
+                // var eventRow = '<li class="event-detail row col-12 col-lg-4 mb-4 fadein"><div class="event-detail-content col-10"><a class="js__event-name" href="' +
+                //   greetingUrl + '" aria-label="Visit ' + eventCity + ' ' + eventType + ' Event" onclick="_gaq.push([\'_trackEvent\', \'program homepage\', \'click\', \'search result name\']);"><span class="city">' +
+                //   eventCity + '</span>, <span class="fullstate">' +
+                //   eventStateAbbr + '</span></a><span class="eventtype d-block">' +
+                //   eventType + ' Event</span><span class="event-date d-block">' +
+                //   eventDate + '</span></div><a href="' +
+                //   greetingUrl + '" class="event-detail-button btn col-2" aria-label="Visit event page for CycleNation ' + eventCity + '" onclick="_gaq.push([\'_trackEvent\', \'program homepage\', \'click\', \'search result arrow\']);"><i class="fas fa-angle-right" aria-hidden="true" alt=""></i></a></li>';
+
+                var eventRow = '<div class="row event-detail"><div class="col-sm-6"><strong>' +
+                    eventName +
+                    "</strong><br>" +
+                    eventLocation +
+                    '<span id="tr' +
+                    eventId +
+                    '">' +
+                    eventDate +
+                    "</span>" +
+                    '</div><div class="col-xs-6 col-sm-3"><a class="button pull-right reverseBtn" href="' +
+                    greetingUrl +
+                    '" aria-label="Details for ' +
+                    eventName +
+                    '">Details</a></div><div class="col-xs-6 col-sm-3"><a onclick="fireLightbox(this)" class="button pull-right" href="javascript:void(0)"  aria-label="Register for ' +
+                    eventName +
+                    '">Register</a><div class="register-lightbox-links hidden"><p><span class="eventname">' +
+                    eventName +
+                    "</span>, <span>" +
+                    // eventLocation +
+                    eventCity +
+                    ", " +
+                    eventStateAbbr +
+                    '<span class="divider">&nbsp;|&nbsp;</span></span><span>' +
+                    eventDate +
+                    '<span class="divider">&nbsp;|&nbsp;</span></span><span >' +
+                            eventLocation +
+                    '</span></p><a class="teamReg cta button" href="' +
+                    newTeamUrl +
+                    '" aria-label="Start a team for ' +
+                    eventName +
+                    '">Start a Team</a><a class="jointeamReg cta button" href="' +
+                    joinTeamUrl +
+                    '" aria-label="Join a team for ' +
+                    eventName +
+                    '">Join a Team</a><a class="individualReg cta button" href="' +
+                    indivUrl +
+                    '"  aria-label="Join as individual for ' +
+                    eventName +
+                    '">Join as Individual</a><a class="close" href="javascript:void(0)"><i class="fa fa-times" aria-hidden="true"></i></a></div></div></div>';
+
+                    if (eventTimestamp > todaysDate && (eventStatus === '1' || eventStatus === '2' || eventStatus === '3')) {
+                        if (numEvents) {
+                            if (liveEventsDisplayed < numEvents) {
+                            // numEvents exists. Restrict the number of results that are displayed
+                            $('.js__event-search-results').append(eventRow);
+                            liveEventsDisplayed++;
+                            } else {
+                                eventRow = $(eventRow).attr('hidden',true);
+                                $('.js__event-search-results').append(eventRow);
+                                $('.js__show-more-events').removeAttr('hidden');
+                                liveEventsDisplayed++;
+                            }
+                        } else {
+                            // numEvents does NOT exist. Display all results in list
+                            $('.js__event-search-results').append(eventRow);
+                        }
+                    } else if (eventStatus === '1' || eventStatus === '2' || eventStatus === '3') {
+                        // display past events in a separate table
+                        if (numEvents) {
+                            if (pastEventsDisplayed < numEvents) {
+                            // numEvents exists. Restrict the number of results that are displayed
+                            console.log('numevents < 3');
+                            $('.js__past-event-search-results').append(eventRow);
+                            pastEventsDisplayed++;
+                            } else {
+                                eventRow = $(eventRow).attr('hidden',true);
+                                $('.js__past-event-search-results').append(eventRow);
+                                $('.js__show-more-events').removeAttr('hidden');
+                                pastEventsDisplayed++;
+                            }
+                        } else {
+                            // numEvents does NOT exist. Display all results in list
+                            $('.js__past-event-search-results').append(eventRow);
+                        }
+                    
+                    }
+                 }
+              });
+
+            //   if (liveEventsDisplayed === 0) {
+            //     $('.js__no-event-results').removeClass('d-none');
+            //   }
+
+              $('.js__event-details').on('click', function () {
+                _gaq.push(['t2._trackEvent', 'program-homepage', 'click', 'search-event-details-button']);
+              });
+
+              $('.js__event-register').on('click', function () {
+                _gaq.push(['t2._trackEvent', 'program-homepage', 'click', 'search-event-register-button']);
+              });
+
+              $('.js__event-name').on('click', function () {
+                _gaq.push(['t2._trackEvent', 'program-homepage', 'click', 'search-event-details-link']);
+              });
+
+            } else {
+              $('.js__loading').hide();
+              $('.js__no-event-results').removeClass('d-none');
+            }
+          },
+          error: function (response) {
+            $('.js__loading').hide();
+            console.log('getEvents error: ' + response.errorResponse.message);
+          }
+        }
+      });
+    };
+    // BEGIN getEventsByDistance
+
+    cd2.getEventsByDistance = function (zipCode) {
+      $('.js__no-event-results').addClass('d-none');
+      $('.js__loading').show();
+    //   if ($('body').is('.pg_cn_home')) {
+        var numEvents = 3;
+    //   }
+      luminateExtend.api({
+        api: 'teamraiser',
+        data: 'method=getTeamraisersByDistance' +
+          '&starting_postal=' + zipCode +
+          '&distance_units=mi' +
+          '&search_distance=200' +
+          '&event_type=' + eventType +
+          '&response_format=json&list_page_size=499&list_page_offset=0&list_sort_column=distance&list_ascending=true',
+        callback: {
+          success: function (response) {
+            $('.js__show-more-events, .js__show-fewer-events').attr('hidden', true);
+            if (response.getTeamraisersResponse.totalNumberResults > '0') {
+              $('.js__loading').hide();
+              $('.js__event-search-results').removeClass('d-none');
+              $('.js__past-event-search-results').removeClass('d-none');
+              var events = luminateExtend.utils.ensureArray(response.getTeamraisersResponse.teamraiser);
+
+              var todaysDate = new Date();
+              todaysDate.setDate(todaysDate.getDate() - 1);
+              var liveEventsDisplayed = 0;
+              var pastEventsDisplayed = 0;
+
+              $(events).each(function (i, event) {
+               if ((event.name).indexOf(" Test") < 0) {
+                var eventId = event.id;
+                var eventName = event.name;
+                var eventDate = luminateExtend.utils.simpleDateFormat(event.event_date,
+                  'EEEE, MMMM d, yyyy');
+                var eventTimestamp = new Date(event.event_date);
+                var eventCity = event.city;
+                var eventStateAbbr = event.state;
+                var eventStateFull = event.mail_state;
+                var eventLocation = event.location_name ? event.location_name + "<br>" : '';
+                var eventStatus = event.status;
+                var eventType = event.public_event_type_name;
+                var greetingUrl = event.greeting_url;
+                var newTeamUrl = event.reg_new_team_url;
+                var joinTeamUrl = event.reg_join_team_url;
+                var indivUrl = event.reg_indiv_url;
+                var registerUrl = 'SPageServer/?pagename=cn_register&fr_id=' + eventId + '&s_regType=';
+                var acceptsRegistration = event.accepting_registrations;
+
+
+                // var eventRow = '<li class="event-detail row col-12 col-lg-4 mb-4 fadein"><div class="event-detail-content col-10"><a class="js__event-name" href="' +
+                //   greetingUrl + '" aria-label="Visit ' + eventCity + ' ' + eventType + ' Event"><span class="city">' +
+                //   eventCity + '</span>, <span class="fullstate">' +
+                //   eventStateAbbr + '</span></a><span class="eventtype d-block">' +
+                //   eventType + ' Event</span><span class="event-date d-block">' +
+                //   eventDate + '</span></div><a href="' +
+                //   greetingUrl + '" class="event-detail-button btn col-2"  aria-label="Visit event page for CycleNation ' + eventCity + '"><i class="fas fa-angle-right" aria-hidden="true" alt=""></i></a></li>';
+                var eventRow = '<div class="row event-detail"><div class="col-sm-6"><strong>' +
+                    eventName +
+                    "</strong><br>" +
+                    eventLocation +
+                    '<span id="tr' +
+                    eventId +
+                    '">' +
+                    eventDate +
+                    "</span>" +
+                    '</div><div class="col-xs-6 col-sm-3"><a class="button pull-right reverseBtn" href="' +
+                    greetingUrl +
+                    '" aria-label="Details for ' +
+                    eventName +
+                    '">Details</a></div><div class="col-xs-6 col-sm-3"><a onclick="fireLightbox(this)" class="button pull-right" href="javascript:void(0)"  aria-label="Register for ' +
+                    eventName +
+                    '">Register</a><div class="register-lightbox-links hidden"><p><span class="eventname">' +
+                    eventName +
+                    "</span>, <span>" +
+                    // eventLocation +
+                    eventCity +
+                    ", " +
+                    eventStateAbbr +
+                    '<span class="divider">&nbsp;|&nbsp;</span></span><span>' +
+                    eventDate +
+                    '<span class="divider">&nbsp;|&nbsp;</span></span><span >' +
+                            eventLocation +
+                    '</span></p><a class="teamReg cta button" href="' +
+                    newTeamUrl +
+                    '" aria-label="Start a team for ' +
+                    eventName +
+                    '">Start a Team</a><a class="jointeamReg cta button" href="' +
+                    joinTeamUrl +
+                    '" aria-label="Join a team for ' +
+                    eventName +
+                    '">Join a Team</a><a class="individualReg cta button" href="' +
+                    indivUrl +
+                    '"  aria-label="Join as individual for ' +
+                    eventName +
+                    '">Join as Individual</a><a class="close" href="javascript:void(0)"><i class="fa fa-times" aria-hidden="true"></i></a></div></div></div>';
+                if (eventTimestamp > todaysDate && (eventStatus === '1' || eventStatus === '2' || eventStatus === '3')) {
+                  if (numEvents) {
+                    if (liveEventsDisplayed < numEvents) {
+                      // numEvents exists. Restrict the number of results that are displayed
+                      $('.js__event-search-results').append(eventRow);
+                      liveEventsDisplayed++;
+                    } else {
+                        eventRow = $(eventRow).attr('hidden',true);
+                        $('.js__event-search-results').append(eventRow);
+                        $('.js__show-more-events').removeAttr('hidden');
+                        liveEventsDisplayed++;
+                    }
+                  } else {
+                    // numEvents does NOT exist. Display all results in list
+                    $('.js__event-search-results').append(eventRow);
+                  }
+                } else if (eventStatus === '1' || eventStatus === '2' || eventStatus === '3') {
+                  // display past events in a separate table
+                  if (numEvents) {
+                    if (pastEventsDisplayed < numEvents) {
+                      // numEvents exists. Restrict the number of results that are displayed
+                      console.log('numevents < 3');
+                      $('.js__past-event-search-results').append(eventRow);
+                      pastEventsDisplayed++;
+                    } else {
+                        eventRow = $(eventRow).attr('hidden',true);
+                        $('.js__past-event-search-results').append(eventRow);
+                        $('.js__show-more-events').removeAttr('hidden');
+                        pastEventsDisplayed++;
+                    }
+                  } else {
+                    // numEvents does NOT exist. Display all results in list
+                    $('.js__past-event-search-results').append(eventRow);
+                  }
+                  
+                }
+               }
+              });
+
+              // accessibility screen reader label for state search
+              $("select#fr_event_state").on({
+                "change": function () {
+                  $(this).blur();
+                },
+                'focus': function () {
+                  $('.js__state-search-submit').text('Search');
+                },
+                "blur": function () {
+                  $('.js__state-search-submit').text('Search');
+                },
+                "keyup": function (e) {
+                  if (e.keyCode == 27)
+                    $('.js__state-search-submit').text('Search');
+                }
+              });
+
+              $('.js__event-details').on('click', function () {
+                _gaq.push(['t2._trackEvent', 'program-homepage', 'click', 'search-event-details-button']);
+              });
+
+              $('.js__event-register').on('click', function () {
+                _gaq.push(['t2._trackEvent', 'program-homepage', 'click', 'search-event-register-button']);
+              });
+
+              $('.js__event-name').on('click', function () {
+                _gaq.push(['t2._trackEvent', 'program-homepage', 'click', 'search-event-details-link']);
+              });
+              // addScrollLinks();
+
+              // applyListFilter only on cn_home
+              // applyListFilter();
+
+            } else {
+              $('.js__loading').hide();
+              $('.js__no-event-results').removeClass('d-none');
+            }
+          },
+          error: function (response) {
+            $('.js__loading').hide();
+            console.log('getEvents error: ' + response.errorResponse.message);
+          }
+        }
+      });
+    };
+    // END getEventsByDistance
+
+    $('.js__show-more-events').on('click', function (e) {
+      e.preventDefault();
+      $(this).attr('hidden', true);
+      $('.event-detail').removeAttr('hidden');
+      $('.js__show-fewer-events').removeAttr('hidden');
+    });
+
+    $('.js__show-fewer-events').on('click', function (e) {
+      e.preventDefault();
+      $([document.documentElement, document.body]).animate({
+        scrollTop: $("#eventSearch").offset().top
+        }, 1000);
+        setTimeout(function(){
+            $('.js__show-fewer-events').attr('hidden', true);
+            $('.event-detail').each(function (i) {
+                if (i > 2) {
+                $(this).attr('hidden', true);
+                }
+            });
+            $('.js__show-more-events').removeAttr('hidden');
+        }, 1000);
+    });
+
+
+
+    function getLocation() {
+      var options = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 'infinity'
+      };
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showGeolocationError, options);
+      } else {
+        console.log("Geolocation is not supported by this browser.");
+      }
+    }
+
+    function showPosition(position) {
+      var input = position.coords.latitude + "," + position.coords.longitude;
+      var latlngStr = input.split(',', 2);
+      var latlng = new google.maps.LatLng(latlngStr[0], latlngStr[1]);
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode({
+        'location': latlng
+      }, function (results, status) {
+
+        var postalCode;
+
+        if (status == google.maps.GeocoderStatus.OK && results[0]) {
+          $.each(results[0].address_components, function () {
+            if ($.inArray('postal_code', this.types) >= 0) {
+              postalCode = this.short_name;
+            }
+          });
+
+          if (postalCode) {
+            cd2.getEventsByDistance(postalCode);
+            $('#eventSearch #zip').val(postalCode);
+          } else {
+            if (results[0].geometry && results[0].geometry.location) {
+              // getZipForLatLng({
+              //   lat: results[0].geometry.location.lat(),
+              //   lng: results[0].geometry.location.lng(),
+              //   callback: settings.callback
+              // });
+            } else {
+              cd2.getEventsByDistance(postalCode);
+            }
+          }
+        } else {
+          cd2.getEventsByDistance(postalCode);
+        }
+      });
+
+      // geocoder.geocode( { 'location': latlng }, function (result, status) {
+      // console.log("Geocode result: ", result);
+      // console.log("Geocode status: ", status);
+
+      //   var zipCode = result[0]['address_components'][7]['short_name'];
+      //   cd2.getEventsByDistance(zipCode);
+
+      // });
+    }
+
+    function showGeolocationError(error) {
+      cd2.getEvents('%25%25', null, null);
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          console.log("User denied the request for Geolocation.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          console.log("Location information is currently unavailable.");
+          break;
+        case error.TIMEOUT:
+          console.log("The request to get location timed out.  Please refresh the page to use this feature.");
+          break;
+        case error.UNKNOWN_ERROR:
+          console.log("An unknown error occurred.");
+          break;
+      }
+    }
+    // Call roster scripts based on page type
+    
+    
+    // if ($('body').is('.pg_cn_home') || $('body').is('.pg_cn_events')) {
+
+      // if ($('body').is('.pg_cn_home')) {
+        $('.js__loading').show();
+        getLocation();
+      // } else {
+      //   cd2.getEvents('%25%25', null, 'city');
+      // }
+
+      var clearEventSearchResults = function () {
+        $('.js__event-search-results').html('');
+        $('.js__past-event-search-results').html('');
+        $('.js__past-events-container').addClass('d-none');
+      }
+      $('.js__state-search select').on('change', function (e) {
+        e.preventDefault();
+        $('#zip').val('');
+        clearEventSearchResults();
+        var stateSearched = $(this).children('option:selected').val();
+        var citySearched = $('.js__state-search input#city').val();
+
+        if (stateSearched === 'Select State') {
+          cd2.getEvents('%25%25', null, null);
+        } else {
+          cd2.getEvents(null, citySearched, stateSearched);
+        }
+        e.preventDefault();
+      });
+
+      $('.js__state-search').on('submit', function (e) {
+        e.preventDefault();
+        $('#zip').val('');
+        clearEventSearchResults();
+        var stateSearched = $('.js__state-search select').children('option:selected').val();
+        var citySearched = $('.js__state-search input#city').val();
+        if (stateSearched === 'Select State') {
+          cd2.getEvents('%25%25', null, null);
+        } else {
+          cd2.getEvents(null, citySearched, stateSearched);
+        }
+        e.preventDefault();
+      });
+      $('.js__zip-search').on('submit', function (e) {
+        $('#fr_event_state').val($('#fr_event_state option:first').val());
+        $('.js__state-search input#city').val('');
+        $('.js__event-search-results').html('');
+        clearEventSearchResults();
+        var zipSearched = $('#zip').val();
+        if (zipSearched.length) {   
+          cd2.getEventsByDistance(zipSearched);
+        } else {
+          cd2.getEvents('%25%25', null, null);
+        }
+
+        e.preventDefault();
+      });
+
+
+    // } else if ($('body').is('.pg_entry')) {
+    //   cd2.getTopParticipants(evID);
+    //   cd2.getTopTeams(evID);
+    //   cd2.getTopCompanies(evID);
+    // }
+
+
+
+    // END LANDING PAGE ONLY
+    });
+  }(jQuery));
+
+  </script>
+
+
+
+  <script type="text/javascript">// <![CDATA[
+  // SCROLL EFFECT FOR DONATE AND REGISTER ONLY ON HOMEPAGE
+  jQuery(".regBtn").click(function(event) {
+    event.preventDefault();
+    jQuery('html, body').animate({
+        scrollTop: jQuery("#eventSearch").offset().top
+    }, 500);
+    jQuery('#inputZip').focus();
+  });
+  jQuery(".donateBtn").click(function(event) {
+    event.preventDefault();
+    jQuery('html, body').animate({
+        scrollTop: jQuery("#landingTriSearch").offset().top
+    }, 500);
+    jQuery('#participantTab').focus();
+  });
+  
+  
+  
+  // Lightbox_me app
+  !function(e){e.fn.lightbox_me=function(o){return this.each(function(){function i(){c[0].style;s.destroyOnClose?c.add(d).remove():c.add(d).hide(),s.parentLightbox&&s.parentLightbox.fadeIn(200),s.preventScroll&&e("body").css("overflow",""),a.remove(),c.undelegate(s.closeSelector,"click"),c.unbind("close",i),c.unbind("repositon",l),e(window).unbind("resize",t),e(window).unbind("resize",l),e(window).unbind("scroll",l),e(window).unbind("keyup.lightbox_me"),s.onClose()}function n(e){(27==e.keyCode||27==e.DOM_VK_ESCAPE&&0==e.which)&&s.closeEsc&&i()}function t(){e(window).height()<e(document).height()?(d.css({height:e(document).height()+"px"}),a.css({height:e(document).height()+"px"})):d.css({height:"100%"})}function l(){c[0].style;if(c.css({left:"50%",marginLeft:c.outerWidth()/2*-1,zIndex:s.zIndex+3}),c.height()+80>=e(window).height()&&"absolute"!=c.css("position")){var o=e(document).scrollTop()+40;c.css({position:"absolute",top:o+"px",marginTop:0})}else c.height()+80<e(window).height()&&(s.centered?c.css({position:"fixed",top:"50%",marginTop:c.outerHeight()/2*-1}):c.css({position:"fixed"}).css(s.modalCSS),s.preventScroll&&e("body").css("overflow","hidden"))}var s=e.extend({},e.fn.lightbox_me.defaults,o),d=e(),c=e(this),a=e('<iframe id="foo" style="z-index: '+(s.zIndex+1)+';border: none; margin: 0; padding: 0; position: absolute; width: 100%; height: 100%; top: 0; left: 0; filter: mask();" />');if(s.showOverlay){var r=e(".js_lb_overlay:visible");d=e(r.length>0?'<div class="lb_overlay_clear js_lb_overlay" />':'<div class="'+s.classPrefix+'_overlay js_lb_overlay" />')}e("body").append(c.hide()).append(d),s.showOverlay&&(t(),d.css({position:"absolute",width:"100%",top:0,left:0,right:0,bottom:0,zIndex:s.zIndex+2,display:"none"}),d.hasClass("lb_overlay_clear")||d.css(s.overlayCSS)),s.showOverlay?d.fadeIn(s.overlaySpeed,function(){l(),c[s.appearEffect](s.lightboxSpeed,function(){t(),l(),s.onLoad()})}):(l(),c[s.appearEffect](s.lightboxSpeed,function(){s.onLoad()})),s.parentLightbox&&s.parentLightbox.fadeOut(200),e(window).resize(t).resize(l).scroll(l),e(window).bind("keyup.lightbox_me",n),s.closeClick&&d.click(function(e){i(),e.preventDefault}),c.delegate(s.closeSelector,"click",function(e){i(),e.preventDefault()}),c.bind("close",i),c.bind("reposition",l)})},e.fn.lightbox_me.defaults={appearEffect:"fadeIn",appearEase:"",overlaySpeed:250,lightboxSpeed:300,closeSelector:".close",closeClick:!0,closeEsc:!0,destroyOnClose:!1,showOverlay:!0,parentLightbox:!1,preventScroll:!1,onLoad:function(){},onClose:function(){},classPrefix:"lb",zIndex:999,centered:!1,modalCSS:{top:"40px"},overlayCSS:{background:"black",opacity:.8}}}(jQuery);
+  
+  
+     // BEGIN GET DATA FROM API, PLUS LIGHTBOX
+     function getNearbyCities(e,t){"Zip"==e&&$.ajax({type:"GET",url:"https://www2.heart.org/site/CRTeamraiserAPI",data:{method:"getTeamraisersByDistance",api_key:"wDB09SQODRpVIOvX",v:"1.0",starting_postal:t,distance_units:"mi",search_distance:"100",list_sort_column:"distance",list_ascending:"true",list_page_size:"50",response_format:"xml",event_type:"Heart Walk"},dataType:"xml"}).done(function(a){processReturnedData(a,e,t)})}function processReturnedData(e,t,a){var s=new Array,n=(new Array,new Array),r=new Array,i=new Array,o=new Array,c=new Array,l=new Array,d=new Array,u=new Array,p=new Array;new Array,Date.now();if("Zip"==t){var v="Upcoming Events Near "+a;$("h2.upcoming").text(v)}var g="<div id='futureEvents'>",h="",f=0,m=0;if($("teamraiser",e).length>0&&$("teamraiser",e).each(function(e){
+        if( "1" === $(this).find("status").text() || "2" === $(this).find("status").text()){
+            (s[f] = $(this).find("id").text(), r[f] = $(this).find("greeting_url").text(), n[f] = $(this).find("name").text(),
+              i[f] = $(this).find("city").text(), o[f] = $(this).find("state").text(), c[f] = $(this).find("event_date")
+              .text(), l[f] = $(this).find("reg_new_team_url").text(), d[f] = $(this).find("reg_join_team_url").text(),
+              u[f] = $(this).find("reg_indiv_url").text(), p[f] = $(this).find("location_name").text(), f += 1)
+          }
+      }),f>=0){var y=0;for(m=0;m<f;m++){var _="",w=new Array;w[0]="January",w[1]="February",w[2]="March",w[3]="April",w[4]="May",w[5]="June",w[6]="July",w[7]="August",w[8]="September",w[9]="October",w[10]="November",w[11]="December";var b=c[m].split("T"),A=b[0].split("-"),x=b[1].split(":");x[2]=x[2].slice(0,2);var R=new Date(A[0],A[1]-1,A[2],x[0],x[1],x[2]);c[m]=w[R.getMonth()]+" "+R.getDate()+", "+R.getFullYear(),_=""==p[m]?"":p[m]+"<br>",h="",g+=h+='<div class="row"><div class="col-sm-6"><strong>'+n[m]+"</strong><br>"+_+'<span id="tr'+s[m]+'">'+c[m]+'</span>'+'</div><div class="col-xs-6 col-sm-3"><a class="button pull-right reverseBtn" href="'+r[m]+'" aria-label="Details for '+n[m]+'">Details</a></div><div class="col-xs-6 col-sm-3"><a onclick="fireLightbox(this)" class="button pull-right" href="javascript:void(0)"  aria-label="Register for '+n[m]+'">Register</a><div class="register-lightbox-links hidden"><p><span class="eventname">'+n[m]+"</span>, <span>"+i[m]+", "+o[m]+'<span class="divider">&nbsp;|&nbsp;</span></span><span>'+c[m]+'<span class="divider">&nbsp;|&nbsp;</span></span><span >'+p[m]+'</span></p><a class="teamReg cta button" href="'+l[m]+'" aria-label="Start a team for '+n[m]+'">Start a Team</a><a class="jointeamReg cta button" href="'+d[m]+'" aria-label="Join a team for '+n[m]+'">Join a Team</a><a class="individualReg cta button" href="'+u[m]+'"  aria-label="Join as individual for '+n[m]+'">Join as Individual</a><a class="close" href="javascript:void(0)"><i class="fa fa-times" aria-hidden="true"></i></a></div></div></div>',y+=1,cleanResults(),$("#futureEventListContainer").html(g),_ahaAddLinkTrackingToRefreshedContent("#futureEventListContainer");$("#inputZip").val(a),$(".eventSearchResult").removeClass("showAll").addClass("haveResults")}if(0==y){cleanResults();jQuery('<p class="upcoming">No events are active in your area, please use the search to find currently active events</p>').prependTo("#futureEventListContainer")}}}function getLocation(){var e={enableHighAccuracy:!0,timeout:1e4,maximumAge:"infinity"};navigator.geolocation?navigator.geolocation.getCurrentPosition(showPosition,showError,e):console.log("Geolocation is not supported by this browser.")}function showPosition(e){jQuery(".infoDetail .eventSearchComponent").addClass("border");var t=(e.coords.latitude+","+e.coords.longitude).split(",",2),a=new google.maps.LatLng(t[0],t[1]);geocoder=new google.maps.Geocoder,geocoder.geocode({location:a},function(e,t){for(var a=0;a<e[0].address_components.length;a++)for(var s=0;s<e[0].address_components[a].types.length;s++)if("postal_code"==e[0].address_components[a].types[s])var n=e[0].address_components[a].short_name;getNearbyCities("Zip",n)})}function showError(e){switch(e.code){case e.PERMISSION_DENIED:console.log("User denied the request for Geolocation.");break;case e.POSITION_UNAVAILABLE:alert("Location information is currently unavailable.");break;case e.TIMEOUT:alert("The request to get location timed out. Please refresh the page to use this feature.");break;case e.UNKNOWN_ERROR:alert("An unknown error occurred.")}}function cleanResults(){$("#futureEventListContainer #futureEvents div").remove(),$("#futureEventListContainer p").remove(),$("#inputZip").val("")}
+    
+    function fireLightbox (ele) {
+      jQuery('.register-lightbox-container').html('');
+      jQuery('.register-lightbox-container').removeClass('hidden');
+      jQuery(ele).parent().find('.register-lightbox-links').addClass('active-links').clone().appendTo('.register-lightbox-container').removeClass('hidden');
+      $('.register-lightbox-container').lightbox_me({centered: true});
+      _ahaAddLinkTrackingToRefreshedContent('.register-lightbox-container');
+    }
+    // END API CONNECTION
+  
+  //LuminateExtend for tri-search
+  "use strict";function htmlDecode(e){var a=document.createElement("div");return a.innerHTML=e,a.childNodes[0].nodeValue}luminateExtend({apiKey:"wDB09SQODRpVIOvX",path:{nonsecure:"https://www2.heart.org/site/",secure:"https://www2.heart.org/site/"}}),window.cd={};var defaultFormId="4201",trFormId="4201",locale=$("#api_df_advanced").data("locale");cd.relayFormSettings={formId:defaultFormId,eventType:"Heart%20Walk",creditType:"",creditId:""},cd.getParticipants=function(e,a,t){luminateExtend.api({api:"teamraiser",data:"method=getParticipants&first_name="+(void 0!==e?e:"")+"&last_name="+(void 0!==a?a:"")+"&event_type="+t+"&list_page_size=499&response_format=json&list_sort_column=first_name&list_ascending=true&list_page_offset=0",callback:{success:function(e){if("0"===e.getParticipantsResponse.totalNumberResults)$("#error-participant").removeClass("hidden").text("Sorry. Your search did not return any results.");else{var a=luminateExtend.utils.ensureArray(e.getParticipantsResponse.participant);$("#participant_results").removeClass("hidden"),$(a).each(function(e,a){function t(e){$("teamraiser",e).length>0&&$("teamraiser",e).each(function(e){var a=$(this).find("event_date").text(),t=new Array;t[0]="January",t[1]="February",t[2]="March",t[3]="April",t[4]="May",t[5]="June",t[6]="July",t[7]="August",t[8]="September",t[9]="October",t[10]="November",t[11]="December";var s=a.split("T"),n=s[0].split("-"),i=s[1].split(":");i[2]=i[2].slice(0,2);var o=new Date(n[0],n[1]-1,n[2],i[0],i[1],i[2]);r=t[o.getMonth()]+" "+o.getDate()+", "+o.getFullYear()+"<br>"}),$("#participant_rows").append('<div class="row"><div class="col-xs-12 col-sm-10"><strong>'+a.name.first+" "+a.name.last+"</strong><br>"+a.eventName+"<br>"+r+'<a href="'+a.personalPageUrl+'">Personal Page</a>&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></div><div class="col-xs-12 col-sm-2"><a class="button pull-right" href="'+a.donationUrl+'">Donate</a></div></div>')}a.eventName=a.eventName.replace(/&amp;/g,"&");var r="";$.ajax({type:"GET",url:"https://www2.heart.org/site/CRTeamraiserAPI",data:{method:"getTeamraisersByInfo",api_key:"wDB09SQODRpVIOvX",v:"1.0",name:a.eventName,response_format:"xml"},dataType:"xml"}).done(function(e){t(e);addPaymentTypesOnSearch();})}),$("#participant_results").slideDown(),$("#landingTriSearch").removeClass("showAll"),$("#participant").addClass("haveResults")}},error:function(e){$("#error-participant").removeClass("hidden").text(e.errorResponse.message)}}})},cd.getEvents=function(e,a){luminateExtend.api({api:"teamraiser",data:"method=getTeamraisersByDistance&starting_postal="+e+"&event_type="+a+"&search_distance=100&list_page_size=499&response_format=json&list_sort_column=distance&list_ascending=true",callback:{success:function(e){if("0"===e.getTeamraisersResponse.totalNumberResults)$("#error-event").removeClass("hidden").text("Sorry. Your search did not return any results.");else{var a=luminateExtend.utils.ensureArray(e.getTeamraisersResponse.teamraiser);$("#zip_results").removeClass("hidden"),$(a).each(function(e,a){if(a.location_name)t=a.location_name+"<br>";else var t="";var r="",s=new Array;s[0]="January",s[1]="February",s[2]="March",s[3]="April",s[4]="May",s[5]="June",s[6]="July",s[7]="August",s[8]="September",s[9]="October",s[10]="November",s[11]="December";var n=a.event_date.split("T"),i=n[0].split("-"),o=n[1].split(":");o[2]=o[2].slice(0,2);var l=new Date(i[0],i[1]-1,i[2],o[0],o[1],o[2]);r=s[l.getMonth()]+" "+l.getDate()+", "+l.getFullYear(),$("#zip_rows").append('<div class="row"><div class="col-xs-12 col-sm-10"><strong>'+a.name+"</strong><br>"+t+r+'</div><div class="col-xs-12 col-sm-2"><a class="button pull-right" href="'+a.donate_event_url+'">Donate</a></div></div>'),$("#zip_results").slideDown(),$("#landingTriSearch").removeClass("showAll"),$("#event").addClass("haveResults")})}},error:function(e){$("#error-event").removeClass("hidden").text(e.errorResponse.message)}}})},cd.getTeams=function(e,a){luminateExtend.api({api:"teamraiser",data:"method=getTeamsByInfo&team_name="+e+"&event_type="+a+"&list_page_size=499&response_format=json&list_sort_column=name&list_ascending=true",callback:{success:function(e){if("0"===e.getTeamSearchByInfoResponse.totalNumberResults)$("#error-team").removeClass("hidden").text("Sorry. Your search did not return any results.");else{var a=luminateExtend.utils.ensureArray(e.getTeamSearchByInfoResponse.team);$("#team_results").removeClass("hidden"),$(a).each(function(e,a){function t(e){$("teamraiser",e).length>0&&$("teamraiser",e).each(function(e){var a=$(this).find("event_date").text(),t=new Array;t[0]="January",t[1]="February",t[2]="March",t[3]="April",t[4]="May",t[5]="June",t[6]="July",t[7]="August",t[8]="September",t[9]="October",t[10]="November",t[11]="December";var s=a.split("T"),n=s[0].split("-"),i=s[1].split(":");i[2]=i[2].slice(0,2);var o=new Date(n[0],n[1]-1,n[2],i[0],i[1],i[2]);r=t[o.getMonth()]+" "+o.getDate()+", "+o.getFullYear()+"<br>"}),$("#team_rows").append('<div class="row"><div class="col-xs-12 col-sm-10"><strong>'+a.name+"</strong><br>"+a.eventName+"<br>"+r+'</div><div class="col-xs-12 col-sm-2"><a class="button pull-right" href="'+a.teamDonateURL+'">Donate</a></div></div>')}a.eventName=a.eventName.replace(/&amp;/g,"&");var r="";$.ajax({type:"GET",url:"https://www2.heart.org/site/CRTeamraiserAPI",data:{method:"getTeamraisersByInfo",api_key:"wDB09SQODRpVIOvX",v:"1.0",name:a.eventName,response_format:"xml"},dataType:"xml"}).done(function(e){t(e);addPaymentTypesOnSearch();})}),$("#team_results").slideDown(),$("#landingTriSearch").removeClass("showAll"),$("#team").addClass("haveResults")}},error:function(e){$("#error-team").removeClass("hidden").text(e.errorResponse.message)}}})};
+  
+  //click functions and utilties
+  function setEventCookie(e,t){"participant"==t&&(e=e.first+","+e.last);var a=new Date;a.setTime(a.getTime()+864e5);var i="expires="+a.toUTCString();document.cookie="HeartWalkTriSearchTerm="+e+"; expires="+i+"; path=/",document.cookie="HeartWalkTriLast="+t+"; expires="+i+"; path=/"}function cookieCheck(){var e=document.cookie.replace(/(?:(?:^|.*;\s*)HeartWalkTriSearchTerm\s*\=\s*([^;]*).*$)|^.*$/,"$1"),t=document.cookie.replace(/(?:(?:^|.*;\s*)HeartWalkTriLast\s*\=\s*([^;]*).*$)|^.*$/,"$1");if(void 0!==t){if("participant"==t){var a=e.split(",");$("#participant_first_name").val(a[0]),$("#participant_last_name").val(a[1]),$("#participantTab").click(),$("#search_participant").click()}"zip"==t&&($("#event_zip").val(e),$("#eventTab").click(),$("#search_zip").click()),"team"==t&&($("#team_name").val(e),$("#teamTab").click(),$("#search_team").click())}}function getParameterByName(e){e=e.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]");var t=new RegExp("[\\?&]"+e+"=([^&#]*)").exec(location.search);return null===t?"":decodeURIComponent(t[1].replace(/\+/g," "))}$("#landingTriSearch form").submit(function(){return!1}),$("#search_zip").on("click",function(){$(".results-table, .alert").addClass("hidden"),$(".results-rows").html("");var e=$("#event_zip").val(),t=cd.relayFormSettings.eventType;cd.getEvents(e,t),setEventCookie(e,"zip")}),$("#search_participant").on("click",function(){$(".results-table, .alert").addClass("hidden"),$(".results-rows").html("");var e=$("#participant_first_name").val(),t=$("#participant_last_name").val(),a={first:e,last:t},i=cd.relayFormSettings.eventType;cd.getParticipants(e,t,i),setEventCookie(a,"participant")}),$("#search_team").on("click",function(){$(".results-table, .alert").addClass("hidden"),$(".results-rows").html("");var e=$("#team_name").val(),t=cd.relayFormSettings.eventType;cd.getTeams(e,t),setEventCookie(e,"team")}),$("#event_zip").keypress(function(e){if(13==e.which)return $("#search_zip").click(),!1}),$("#participant_first_name, #participant_last_name").keypress(function(e){if(13==e.which)return $("#search_participant").click(),!1}),$("#team_name").keypress(function(e){if(13==e.which)return $("#search_team").click(),!1}),$("#errorHeader, #errorList").html(""),$(".viewMoreBtn").on("click",function(){$("#landingTriSearch").addClass("showAll"),$(this).parent().parent().removeClass("haveResults")}),$("#viewMoreZipBtn").on("click",function(){$(".eventSearchResult").addClass("showAll").removeClass("haveResults")});
+  
+  jQuery(document).ready(function($){
+    cookieCheck(),getLocation(),$(".eventSearchComponent form").submit(function(){return!1}),$("#zipSubmit").click(function(){var e=$("#inputZip").val();getNearbyCities("Zip",e)}),jQuery(".eventReg").on("click",function(){jQuery(".register-lightbox-container").html(""),jQuery(this).parent().find(".register-lightbox-links").addClass("active-links").clone().appendTo(".register-lightbox-container"),$(".register-lightbox-container").lightbox_me({centered:!0})});
+  // ANIMATED LETTERS
+      function initHeadline(){singleLetters($(".cd-headline.letters").find("b")),animateHeadline($(".cd-headline"))}function singleLetters(e){e.each(function(){var e=$(this),t=e.text().split(""),s=e.hasClass("is-visible");for(i in t)t[i]=s?'<i class="in">'+t[i]+"</i>":"<i>"+t[i]+"</i>";var a=t.join("");e.html(a).css("opacity",1)})}function animateHeadline(e){var i=animationDelay;e.each(function(){var e=$(this);if(!e.hasClass("type")){var t=0;e.find(".cd-words-wrapper b").each(function(){var e=$(this).width();e>t&&(t=e)}),e.find(".cd-words-wrapper").css("width",t)}setTimeout(function(){hideWord(e.find(".is-visible").eq(0))},i)})}function hideWord(e){var i=takeNext(e);if(e.parents(".cd-headline").hasClass("type")){var t=e.parent(".cd-words-wrapper");t.addClass("selected").removeClass("waiting"),setTimeout(function(){t.removeClass("selected"),e.removeClass("is-visible").addClass("is-hidden").children("i").removeClass("in").addClass("out")},selectionDuration),setTimeout(function(){showWord(i,typeLettersDelay)},typeAnimationDelay)}else if(e.parents(".cd-headline").hasClass("letters")){var s=e.children("i").length>=i.children("i").length;hideLetter(e.find("i").eq(0),e,s,lettersDelay),showLetter(i.find("i").eq(0),i,s,lettersDelay)}else e.parents(".cd-headline").hasClass("clip")?e.parents(".cd-words-wrapper").animate({width:"2px"},revealDuration,function(){switchWord(e,i),showWord(i)}):(switchWord(e,i),setTimeout(function(){hideWord(i)},animationDelay))}function showWord(e,i){e.parents(".cd-headline").hasClass("type")?(showLetter(e.find("i").eq(0),e,!1,i),e.addClass("is-visible").removeClass("is-hidden")):e.parents(".cd-headline").hasClass("clip")&&e.parents(".cd-words-wrapper").animate({width:e.width()+10},revealDuration,function(){setTimeout(function(){hideWord(e)},revealAnimationDelay)})}function hideLetter(e,i,t,s){if(e.removeClass("in").addClass("out"),e.is(":last-child")?t&&setTimeout(function(){hideWord(takeNext(i))},animationDelay):setTimeout(function(){hideLetter(e.next(),i,t,s)},s),e.is(":last-child")&&$("html").hasClass("no-csstransitions")){var a=takeNext(i);switchWord(i,a)}}function showLetter(e,i,t,s){e.addClass("in").removeClass("out"),e.is(":last-child")?(i.parents(".cd-headline").hasClass("type")&&setTimeout(function(){i.parents(".cd-words-wrapper").addClass("waiting")},200),t||setTimeout(function(){hideWord(i)},animationDelay)):setTimeout(function(){showLetter(e.next(),i,t,s)},s)}function takeNext(e){return e.is(":last-child")?e.parent().children().eq(0):e.next()}function takePrev(e){return e.is(":first-child")?e.parent().children().last():e.prev()}function switchWord(e,i){e.removeClass("is-visible").addClass("is-hidden"),i.removeClass("is-hidden").addClass("is-visible")}var animationDelay=2e3,lettersDelay=50,typeLettersDelay=150,selectionDuration=500,typeAnimationDelay=selectionDuration+800,revealDuration=600,revealAnimationDelay=1500;initHeadline();
+  });
+  // ]]></script>
+
+  
+  <script src="../heartwalk/js/heartwalk-overrides.js"></script>
+
+
+</p>
+<script type="text/javascript">
+    function _ahaAddClickTrackIt( $object ){
+        $object.on("click", function(){ 
+            if(jQuery(this).attr('aria-label')!= undefined)
+            { 
+            $buttonText = jQuery(this).attr('aria-label');
+             }else
+             {
+            $buttonText = jQuery(this).text();
+         }
+            var current_title = $(document).attr('title');
+            //@TODO: replace these values with real values, probably want to pass the button text which is saved in buttonText
+            _gaq.push(['t2._trackEvent', current_title, 'Click', $buttonText]);
+            //console.log( "button Clicked: "+$buttonText );
+        });
+    }
+    function _ahaCheckA( $object )
+    {
+        $href = $object.attr("href") ? $object.attr("href") : "";
+        //it's a mailto link, so track it
+        if( $href.indexOf("mailto") == 0 ){
+            _ahaAddClickTrackIt($object);
+        //it has a class of button and no href so it is a JS link with no href, so track it
+        }else if( $object.hasClass("button") && $href.indexOf( "http" ) == -1 ){
+            //console.log($object.text());
+            _ahaAddClickTrackIt($object);
+        //it has no href, so track it
+        }else if( $href == "" ){
+            _ahaAddClickTrackIt($object);
+        }
+        else if($href.indexOf('http')==0 && $href.match(/#\S+/)){
+            _ahaAddClickTrackIt($object);
+        }
+        else
+        {
+            _ahaAddClickTrackIt($object);
+        }
+    }
+    function _ahaCheckAllLinksForTracking()
+    {
+        //grab all button DOM elements
+        jQuery("button").each( function(){
+            _ahaAddClickTrackIt(jQuery(this));
+       });
+        
+        //grab all a tags and check each one
+        jQuery("a").each( function(){
+            _ahaCheckA( jQuery(this));
+        });
+    }
+    _ahaTrackingLinksApplied = 0;
+    jQuery(window).load(function() {
+        _ahaCheckAllLinksForTracking();
+        _ahaTrackingLinksApplied = 1;
+    });
+    function _ahaAddLinkTrackingToRefreshedContent($objectIdentifier)
+    {
+if( _ahaTrackingLinksApplied == undefined || _ahaTrackingLinksApplied == 0 )
+{ return; }
+            jQuery($objectIdentifier+" a").each( function(){
+                _ahaCheckA( jQuery(this) );
+            });
+    }
+</script>
+	</body>
+
+</html>

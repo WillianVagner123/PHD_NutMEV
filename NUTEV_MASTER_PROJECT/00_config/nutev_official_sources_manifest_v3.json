@@ -1,0 +1,140 @@
+{
+  "version": "2026-04-v3",
+  "sources": [
+    {
+      "name": "FAO_FBDG",
+      "workstream": "busca1",
+      "allowed_domains": [
+        "fao.org"
+      ],
+      "seed_urls": [
+        "https://www.fao.org/nutrition/education/food-dietary-guidelines/en/",
+        "https://www.fao.org/"
+      ]
+    },
+    {
+      "name": "WHO",
+      "workstream": "busca1",
+      "allowed_domains": [
+        "who.int"
+      ],
+      "seed_urls": [
+        "https://www.who.int/"
+      ]
+    },
+    {
+      "name": "ODPHP_DGA",
+      "workstream": "busca1",
+      "allowed_domains": [
+        "health.gov",
+        "odphp.health.gov"
+      ],
+      "seed_urls": [
+        "https://odphp.health.gov/our-work/nutrition-physical-activity/dietary-guidelines"
+      ]
+    },
+    {
+      "name": "Ministerio_Saude_BR",
+      "workstream": "busca1",
+      "allowed_domains": [
+        "gov.br"
+      ],
+      "seed_urls": [
+        "https://www.gov.br/saude/pt-br"
+      ]
+    },
+    {
+      "name": "Health_Canada",
+      "workstream": "busca1",
+      "allowed_domains": [
+        "canada.ca"
+      ],
+      "seed_urls": [
+        "https://food-guide.canada.ca/en/"
+      ]
+    },
+    {
+      "name": "ACLM",
+      "workstream": "artigo3_framework",
+      "allowed_domains": [
+        "lifestylemedicine.org"
+      ],
+      "seed_urls": [
+        "https://lifestylemedicine.org/"
+      ]
+    },
+    {
+      "name": "American_Heart_Association",
+      "workstream": "busca2a",
+      "allowed_domains": [
+        "heart.org",
+        "professional.heart.org"
+      ],
+      "seed_urls": [
+        "https://www.heart.org/"
+      ]
+    },
+    {
+      "name": "ADA",
+      "workstream": "busca2a",
+      "allowed_domains": [
+        "diabetes.org",
+        "professional.diabetes.org"
+      ],
+      "seed_urls": [
+        "https://diabetes.org/"
+      ]
+    },
+    {
+      "name": "ESC",
+      "workstream": "busca2a",
+      "allowed_domains": [
+        "escardio.org"
+      ],
+      "seed_urls": [
+        "https://www.escardio.org/"
+      ]
+    },
+    {
+      "name": "EASD",
+      "workstream": "busca2a",
+      "allowed_domains": [
+        "easd.org"
+      ],
+      "seed_urls": [
+        "https://www.easd.org/"
+      ]
+    },
+    {
+      "name": "ABESO",
+      "workstream": "busca2a",
+      "allowed_domains": [
+        "abeso.org.br"
+      ],
+      "seed_urls": [
+        "https://abeso.org.br/"
+      ]
+    },
+    {
+      "name": "SBD",
+      "workstream": "busca2a",
+      "allowed_domains": [
+        "diabetes.org.br"
+      ],
+      "seed_urls": [
+        "https://diabetes.org.br/"
+      ]
+    },
+    {
+      "name": "SBC",
+      "workstream": "busca2a",
+      "allowed_domains": [
+        "portal.cardiol.br",
+        "socesp.org.br"
+      ],
+      "seed_urls": [
+        "https://portal.cardiol.br/"
+      ]
+    }
+  ]
+}
