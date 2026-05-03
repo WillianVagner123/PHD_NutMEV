@@ -31,6 +31,7 @@ import hashlib
 import json
 import math
 import os
+import random
 import re
 import sys
 import time
@@ -44,6 +45,12 @@ from urllib.parse import quote, urlencode, urljoin, urlparse, parse_qs, unquote
 import xml.etree.ElementTree as ET
 
 import requests
+from download_pipeline import run_parallel_jobs
+from crawler_pipeline import extract_candidate_links_from_html
+from query_builder import build_web_queries as qb_build_web_queries
+from query_builder import combine_query_chunks as qb_combine_query_chunks
+from query_builder import rank_terms_for_query as qb_rank_terms_for_query
+from search_adapters import classify_exception, ddg_extract_results, parse_bing_rss, parse_internet_archive_docs
 
 try:
     import pandas as pd
@@ -97,8 +104,22 @@ DEFAULT_WEB_MAX = 12
 DEFAULT_DOWNLOAD_MAX = 120
 DEFAULT_CRAWL_PAGES = 60
 DEFAULT_CRAWL_LINKS_PER_PAGE = 20
+DEFAULT_SELF_REFINE_ROUNDS = 1
 LOCAL_MIN_TEXT_FOR_DEDUP = 500
 MAX_DOWNLOAD_BYTES = 80_000_000
+SOURCE_RETRY_POLICY = {
+    "pubmed": 5,
+    "europepmc": 5,
+    "openalex": 5,
+    "crossref": 5,
+    "doaj": 4,
+    "google_cse": 4,
+    "ddg_web": 4,
+    "ddg_web_intl": 4,
+    "bing_rss": 4,
+    "internet_archive": 5,
+    "http": 4,
+}
 
 SUPPORTED_LOCAL_EXT = (
     ".pdf", ".docx", ".txt", ".csv", ".xlsx", ".xls", ".html", ".htm", ".json",
@@ -192,6 +213,8 @@ class SearchRecord:
     prisma_decision: str = "PENDING"
     prisma_reason: str = ""
     source_rank: int = 0
+    semantic_score: float = 0.0
+    ai_reasoning: str = ""
     query_used: str = ""
     notes: str = ""
     collected_at_utc: str = ""
@@ -237,6 +260,29 @@ class DownloadManifestRow:
     content_type: str
     collected_at_utc: str
 
+@dataclass
+class PipelineConfig:
+    project_root: Path
+    taxonomy_path: str
+    seed_manifest_path: str
+    email: str
+    mode: str
+    retmax: int
+    web_retmax: int
+    download_max: int
+    crawl_pages: int
+    crawl_links_per_page: int
+    self_refine_rounds: int
+    semantic_rerank: bool
+    download_workers: int
+    no_web_search: bool
+    no_google: bool
+    no_download: bool
+    no_official_crawl: bool
+    ocr_force: bool
+    google_api_key: str
+    google_cse_id: str
+
 
 # ============================================================
 # UTILITÁRIOS
@@ -247,6 +293,18 @@ def now_utc_iso() -> str:
 
 def log(msg: str) -> None:
     print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}")
+
+def log_event(stage: str, event: str, payload: dict | None = None) -> None:
+    row = {"ts_utc": now_utc_iso(), "stage": stage, "event": event, "payload": payload or {}}
+    print(json.dumps(row, ensure_ascii=False))
+
+def handle_stage_exception(stage: str, exc: Exception, context: dict | None = None) -> str:
+    etype = classify_exception(exc)
+    payload = {"error_type": etype, "error": str(exc)}
+    if context:
+        payload.update(context)
+    log_event(stage, "exception", payload)
+    return etype
 
 def ensure_folder(path: Path) -> Path:
     path.mkdir(parents=True, exist_ok=True)
@@ -316,17 +374,69 @@ def session_factory(email: str | None = None) -> requests.Session:
     s.headers.update(headers)
     return s
 
-def safe_get(session: requests.Session, url: str, params: dict | None = None) -> requests.Response:
-    r = session.get(url, params=params, timeout=REQUEST_TIMEOUT)
-    r.raise_for_status()
-    safe_sleep()
-    return r
+def safe_get(session: requests.Session, url: str, params: dict | None = None, retries: int = 4, source: str = "http") -> requests.Response:
+    retries = SOURCE_RETRY_POLICY.get(source, retries)
+    last_exc = None
+    for attempt in range(1, retries + 1):
+        try:
+            r = session.get(url, params=params, timeout=REQUEST_TIMEOUT)
+            if r.status_code in {429, 500, 502, 503, 504}:
+                retry_after = r.headers.get("Retry-After")
+                wait_header = float(retry_after) if retry_after and retry_after.isdigit() else 0.0
+                wait = max(wait_header, min(10.0, (2 ** (attempt - 1)) * 0.5) + random.uniform(0.0, 0.4))
+                log_event("network", "retry_get_status", {"source": source, "url": url[:120], "attempt": attempt, "status": r.status_code, "wait_s": round(wait, 3)})
+                time.sleep(wait)
+                continue
+            r.raise_for_status()
+            safe_sleep()
+            return r
+        except Exception as exc:
+            last_exc = exc
+            wait = min(8.0, (2 ** (attempt - 1)) * 0.4) + random.uniform(0.0, 0.35)
+            log_event("network", "retry_get", {"source": source, "url": url[:120], "attempt": attempt, "wait_s": round(wait, 3), "error": str(exc)})
+            time.sleep(wait)
+    raise last_exc
 
-def safe_post(session: requests.Session, url: str, data: dict | None = None) -> requests.Response:
-    r = session.post(url, data=data, timeout=REQUEST_TIMEOUT)
-    r.raise_for_status()
-    safe_sleep()
-    return r
+def safe_post(session: requests.Session, url: str, data: dict | None = None, retries: int = 4, source: str = "http") -> requests.Response:
+    retries = SOURCE_RETRY_POLICY.get(source, retries)
+    last_exc = None
+    for attempt in range(1, retries + 1):
+        try:
+            r = session.post(url, data=data, timeout=REQUEST_TIMEOUT)
+            if r.status_code in {429, 500, 502, 503, 504}:
+                retry_after = r.headers.get("Retry-After")
+                wait_header = float(retry_after) if retry_after and retry_after.isdigit() else 0.0
+                wait = max(wait_header, min(10.0, (2 ** (attempt - 1)) * 0.5) + random.uniform(0.0, 0.4))
+                log_event("network", "retry_post_status", {"source": source, "url": url[:120], "attempt": attempt, "status": r.status_code, "wait_s": round(wait, 3)})
+                time.sleep(wait)
+                continue
+            r.raise_for_status()
+            safe_sleep()
+            return r
+        except Exception as exc:
+            last_exc = exc
+            wait = min(8.0, (2 ** (attempt - 1)) * 0.4) + random.uniform(0.0, 0.35)
+            log_event("network", "retry_post", {"source": source, "url": url[:120], "attempt": attempt, "wait_s": round(wait, 3), "error": str(exc)})
+            time.sleep(wait)
+    raise last_exc
+
+def validate_runtime_dependencies(mode: str) -> tuple[list[str], list[str]]:
+    """
+    Valida dependências opcionais por modo para falhar cedo com mensagens claras.
+    Retorna (warnings, errors).
+    """
+    warnings: list[str] = []
+    errors: list[str] = []
+    if mode in {"search", "download", "all"} and BeautifulSoup is None:
+        errors.append("beautifulsoup4 ausente: necessário para crawler e parsing web.")
+    if mode in {"all", "local", "download"}:
+        if pdfplumber is None:
+            warnings.append("pdfplumber ausente: extração textual de PDF ficará limitada.")
+        if pytesseract is None or Image is None:
+            warnings.append("pytesseract/Pillow ausentes: OCR de PDFs escaneados/imagens desativado.")
+        if py_docx is None:
+            warnings.append("python-docx ausente: leitura DOCX desativada.")
+    return warnings, errors
 
 def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -382,6 +492,18 @@ def compact_free_text_query(query: str, max_terms: int = 14) -> str:
         if len(cleaned) >= max_terms:
             break
     return ' '.join(cleaned)
+
+def mine_terms_from_records(records: List[SearchRecord], top_k: int = 10) -> List[str]:
+    stop = {"health", "study", "article", "review", "guideline", "nutrition", "diet"}
+    bag: Dict[str, int] = defaultdict(int)
+    for r in records[:120]:
+        text = f"{r.title} {r.snippet} {r.abstract}"
+        for t in re.findall(r"[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ\\-]{3,}", (text or "").lower()):
+            if t in stop:
+                continue
+            bag[t] += 1
+    ranked = sorted(bag.items(), key=lambda x: x[1], reverse=True)
+    return [t for t, _ in ranked[:top_k]]
 
 def detect_extension_from_response(url: str, content_type: str = "") -> str:
     ctype = (content_type or '').lower()
@@ -625,32 +747,15 @@ def plain_or_block(terms: List[str]) -> str:
             parts.append(escaped)
     return "(" + " OR ".join(parts) + ")" if parts else ""
 
+def rank_terms_for_query(terms: List[str], max_terms: int, prefer_multiword: bool = True) -> List[str]:
+    return qb_rank_terms_for_query(terms, max_terms, prefer_multiword=prefer_multiword)
+
+def combine_query_chunks(chunks: List[List[str]], max_terms: int = 16) -> str:
+    return qb_combine_query_chunks(chunks, max_terms=max_terms)
+
 def build_web_queries(bank: Dict[str, List[str]], workstream_key: str) -> Dict[str, str]:
-    lifestyle = take_terms(bank.get("lifestyle_terms", []), 8)
-    patterns = take_terms(bank.get("pattern_terms", []), 8)
-    clinical = take_terms(bank.get("clinical_terms", []) or bank.get("condition_terms", []), 8)
-    outcomes = take_terms(bank.get("outcome_terms", []), 8)
-    docs = take_terms(bank.get("document_type_terms", []), 8)
-    impl = take_terms(bank.get("implementation_terms", []), 10)
-    hints = take_terms(bank.get("web_query_hints", []), 6)
-
-    pt_terms = [t for t in lifestyle + patterns + clinical + impl + docs + hints if any(ch in t for ch in "çãõáéíóú")]
-    en_terms = [t for t in lifestyle + patterns + clinical + impl + docs + hints if t not in pt_terms]
-
-    q_balanced_en = " ".join(take_terms(en_terms, 14))
-    q_balanced_pt = " ".join(take_terms(pt_terms or bank.get("condition_terms", []), 14))
-    q_implementation = " ".join(take_terms(impl + outcomes + patterns, 14))
-    q_guidelines = " ".join(take_terms(clinical + docs + hints + patterns, 14))
-    q_framework = " ".join(take_terms(lifestyle + impl + bank.get("nutrition_terms", []), 14))
-
-    # queries mais enxutas para não explodir em motores web
-    return {
-        "balanced_en": compact_free_text_query(q_balanced_en, 12),
-        "balanced_pt": compact_free_text_query(q_balanced_pt, 12),
-        "implementation": compact_free_text_query(q_implementation, 12),
-        "guidelines_docs": compact_free_text_query(q_guidelines, 12),
-        "framework": compact_free_text_query(q_framework, 12),
-    }
+    _ = workstream_key
+    return qb_build_web_queries(bank)
 
 def build_query_variants(taxonomy: dict, workstream_key: str) -> Dict[str, Dict[str, str]]:
     bank = collect_term_bank(taxonomy, workstream_key)
@@ -830,6 +935,28 @@ def score_search_record(record: SearchRecord, taxonomy: dict) -> Tuple[float, Li
     else:
         decision, reason = "EXCLUDE", "Baixa aderência ao escopo-alvo"
     return round(score, 2), matched[:20], decision, reason
+
+def semantic_rerank_records(records: List[SearchRecord], anchor_text: str) -> List[SearchRecord]:
+    if not records or TfidfVectorizer is None or cosine_similarity is None:
+        return records
+    corpus = [anchor_text] + [f"{r.title} {r.snippet} {r.abstract}" for r in records]
+    try:
+        vec = TfidfVectorizer(min_df=1, ngram_range=(1, 2), max_features=6000)
+        mat = vec.fit_transform(corpus)
+        sims = cosine_similarity(mat[0:1], mat[1:]).flatten()
+        for i, r in enumerate(records):
+            s = float(sims[i])
+            r.semantic_score = s
+            r.ai_reasoning = (
+                "Alta similaridade semântica com a pergunta."
+                if s >= 0.30 else
+                "Similaridade semântica moderada."
+                if s >= 0.18 else
+                "Baixa similaridade semântica."
+            )
+        return sorted(records, key=lambda x: (x.semantic_score, x.relevance_score), reverse=True)
+    except Exception:
+        return records
 
 def preferred_record(a: SearchRecord, b: SearchRecord) -> SearchRecord:
     score_a = (bool(a.abstract), bool(a.doi), a.is_oa, bool(a.pdf_url), bool(a.landing_url), len(a.title), len(a.abstract), a.relevance_score)
@@ -1246,25 +1373,13 @@ def search_ddg_html(session: requests.Session, workstream: str, query_variant: s
         return []
     url = "https://html.duckduckgo.com/html/"
     resp = safe_post(session, url, data={"q": query})
-    soup = BeautifulSoup(resp.text, "html.parser")
-
+    parsed = ddg_extract_results(resp.text, normalize_url_from_search, decode_html_entities, detect_extension_from_response, BeautifulSoup)
     rows = []
-    for a in soup.select("a.result__a, a[data-testid='result-title-a']"):
-        href = normalize_url_from_search(a.get("href", ""))
-        title = decode_html_entities(a.get_text(" ", strip=True))
-        if not href or not title:
-            continue
-        container = a.parent
-        snippet = ""
-        if container:
-            snip = container.find_next(string=False)
-        # fallback simple search for nearest snippet element
-        parent = a.parent
-        if parent and hasattr(parent, "find"):
-            snip_tag = parent.find(class_=re.compile("result__snippet"))
-            if snip_tag:
-                snippet = snip_tag.get_text(" ", strip=True)
-        file_hint = detect_extension_from_response(href, "")
+    for item in parsed:
+        href = item["href"]
+        title = item["title"]
+        snippet = item["snippet"]
+        file_hint = item["ext"]
         rows.append(SearchRecord(
             uid=make_uid("ddg_web", workstream, title, "", href),
             workstream=workstream,
@@ -1278,6 +1393,144 @@ def search_ddg_html(session: requests.Session, workstream: str, query_variant: s
             pdf_url=href if file_hint == ".pdf" else "",
             file_ext_hint=file_hint,
             is_oa=file_hint == ".pdf",
+            query_used=query,
+            collected_at_utc=now_utc_iso(),
+        ))
+        if len(rows) >= retmax:
+            break
+    return rows
+
+def search_ddg_html_international(session: requests.Session, workstream: str, query_variant: str, query: str, retmax: int) -> List[SearchRecord]:
+    """Executa DDG HTML em múltiplas localidades para ampliar cobertura internacional."""
+    if BeautifulSoup is None:
+        return []
+    locales = ["wt-wt", "us-en", "uk-en", "br-pt", "es-es", "fr-fr", "de-de", "jp-jp", "in-en"]
+    rows: List[SearchRecord] = []
+    seen_urls = set()
+    per_locale = max(2, math.ceil(retmax / max(1, len(locales))))
+    url = "https://html.duckduckgo.com/html/"
+    for locale in locales:
+        try:
+            resp = safe_post(session, url, data={"q": query, "kl": locale, "kp": "-2"})
+            parsed = ddg_extract_results(resp.text, normalize_url_from_search, decode_html_entities, detect_extension_from_response, BeautifulSoup)
+            for item in parsed:
+                href = item["href"]
+                title = item["title"]
+                if not href or not title or href in seen_urls:
+                    continue
+                seen_urls.add(href)
+                snippet = item["snippet"]
+                file_hint = item["ext"]
+                rows.append(SearchRecord(
+                    uid=make_uid("ddg_web_intl", workstream, title, "", href),
+                    workstream=workstream,
+                    query_variant=query_variant,
+                    source="ddg_web_intl",
+                    record_kind="web",
+                    title=title,
+                    snippet=snippet,
+                    document_type=f"web_result_{locale}",
+                    landing_url=href,
+                    pdf_url=href if file_hint == ".pdf" else "",
+                    file_ext_hint=file_hint,
+                    is_oa=file_hint == ".pdf",
+                    query_used=query,
+                    collected_at_utc=now_utc_iso(),
+                ))
+                if len([r for r in rows if r.document_type.endswith(locale)]) >= per_locale:
+                    break
+        except Exception as exc:
+            log(f"Falha em DDG internacional ({locale}): {exc}")
+        if len(rows) >= retmax:
+            break
+    return rows[:retmax]
+
+def search_bing_rss(session: requests.Session, workstream: str, query_variant: str, query: str, retmax: int) -> List[SearchRecord]:
+    """Fallback web via RSS do Bing para maior cobertura e robustez sem API key."""
+    rows: List[SearchRecord] = []
+    regions = [("us", "en-US"), ("br", "pt-BR"), ("gb", "en-GB"), ("es", "es-ES"), ("fr", "fr-FR")]
+    seen = set()
+    per_region = max(2, math.ceil(retmax / max(1, len(regions))))
+    for cc, lang in regions:
+        try:
+            url = "https://www.bing.com/search"
+            params = {"q": query, "format": "rss", "cc": cc, "setlang": lang}
+            resp = safe_get(session, url, params=params)
+            parsed = parse_bing_rss(resp.content, decode_html_entities, first_nonempty, detect_extension_from_response)
+            count_region = 0
+            for item in parsed:
+                title = item["title"]
+                link = item["href"]
+                snippet = item["snippet"]
+                if not link or not title or link in seen:
+                    continue
+                seen.add(link)
+                file_hint = item["ext"]
+                rows.append(SearchRecord(
+                    uid=make_uid("bing_rss", workstream, title, "", link),
+                    workstream=workstream,
+                    query_variant=query_variant,
+                    source="bing_rss",
+                    record_kind="web",
+                    title=title,
+                    snippet=snippet,
+                    document_type=f"web_result_{cc}",
+                    landing_url=link,
+                    pdf_url=link if file_hint == ".pdf" else "",
+                    file_ext_hint=file_hint,
+                    is_oa=file_hint == ".pdf",
+                    query_used=query,
+                    collected_at_utc=now_utc_iso(),
+                ))
+                count_region += 1
+                if count_region >= per_region or len(rows) >= retmax:
+                    break
+        except Exception as exc:
+            log(f"Falha em Bing RSS ({cc}/{lang}): {exc}")
+        if len(rows) >= retmax:
+            break
+    return rows[:retmax]
+
+def search_internet_archive(session: requests.Session, workstream: str, query_variant: str, query: str, retmax: int) -> List[SearchRecord]:
+    """
+    Busca no Internet Archive (fonte pública/legal) para ampliar cobertura global.
+    """
+    rows: List[SearchRecord] = []
+    url = "https://archive.org/advancedsearch.php"
+    q = f'title:({query}) OR description:({query})'
+    params = {
+        "q": q,
+        "fl[]": ["identifier", "title", "description", "year", "language", "mediatype"],
+        "rows": max(1, min(retmax, 50)),
+        "page": 1,
+        "output": "json",
+    }
+    try:
+        data = safe_get(session, url, params=params).json()
+        docs = parse_internet_archive_docs(data, safe_dict, safe_list, first_nonempty, decode_html_entities)
+    except Exception:
+        docs = []
+
+    for item in docs:
+        identifier = item["identifier"]
+        title = item["title"]
+        landing = f"https://archive.org/details/{identifier}"
+        snippet = item["description"]
+        year = item["year"]
+        language = item["language"]
+        mediatype = item["mediatype"]
+        rows.append(SearchRecord(
+            uid=make_uid("internet_archive", workstream, title, year, landing),
+            workstream=workstream,
+            query_variant=query_variant,
+            source="internet_archive",
+            record_kind="web",
+            title=title,
+            snippet=snippet,
+            year=year,
+            language=language,
+            document_type=f"archive_{mediatype}",
+            landing_url=landing,
             query_used=query,
             collected_at_utc=now_utc_iso(),
         ))
@@ -1471,34 +1724,23 @@ def crawl_result_pages_and_collect_candidates(
         page_text_excerpt = soup.get_text(" ", strip=True)[:600]
         save_html_snapshot(project_root, record.workstream, record.source, url, html, title=page_title)
 
-        local_count = 0
-        for a in soup.find_all("a", href=True):
-            href = urljoin(url, a["href"])
-            href_low = href.lower()
-            if any(h in href_low for h in PAYWALL_HINTS):
-                continue
-            anchor_text = a.get_text(" ", strip=True)
-            if not looks_like_relevant_link(href, anchor_text):
-                continue
-            ext = detect_extension_from_response(href, "")
-            if ext not in DOWNLOADABLE_EXT and ext != ".html":
-                continue
-            rows.append({
-                "workstream": record.workstream,
-                "source_name": record.source,
-                "seed_url": record.query_used,
-                "page_url": url,
-                "page_title": page_title,
-                "page_text_excerpt": page_text_excerpt[:400],
-                "link_text": anchor_text,
-                "link_url": href,
-                "link_ext": ext,
-                "link_bucket": "document_link" if ext in DOWNLOADABLE_EXT else "landing_page",
-                "collected_at_utc": now_utc_iso(),
-            })
-            local_count += 1
-            if local_count >= max_links_per_page:
-                break
+        extracted = extract_candidate_links_from_html(
+            base_url=url,
+            html_soup=soup,
+            page_title=page_title,
+            page_text_excerpt=page_text_excerpt,
+            workstream=record.workstream,
+            source_name=record.source,
+            seed_url=record.query_used,
+            looks_like_relevant_link=looks_like_relevant_link,
+            detect_extension_from_response=detect_extension_from_response,
+            downloadable_ext=DOWNLOADABLE_EXT,
+            paywall_hints=PAYWALL_HINTS,
+            max_links_per_page=max_links_per_page,
+        )
+        for item in extracted:
+            item["collected_at_utc"] = now_utc_iso()
+            rows.append(item)
 
         pages_done += 1
 
@@ -1517,14 +1759,15 @@ def download_candidate_links(
     project_root: Path,
     bucket_name: str,
     max_downloads: int = DEFAULT_DOWNLOAD_MAX,
+    max_workers: int = 4,
 ) -> pd.DataFrame:
     rows: List[DownloadManifestRow] = []
-    downloaded = 0
+    jobs = []
     seen = set()
     if candidate_df is None or candidate_df.empty:
         return pd.DataFrame()
     for _, row in candidate_df.iterrows():
-        if downloaded >= max_downloads:
+        if len(jobs) >= max_downloads:
             break
         url = first_nonempty(row.get("link_url"), "")
         if not url or url in seen:
@@ -1551,10 +1794,19 @@ def download_candidate_links(
             query_used=first_nonempty(row.get("seed_url"), ""),
             collected_at_utc=now_utc_iso(),
         )
-        dl_row = download_single_public_url(session, rec, ws_dir, bucket_name)
-        rows.append(dl_row)
-        if dl_row.status in {"downloaded", "exists"}:
-            downloaded += 1
+        jobs.append((rec, ws_dir))
+
+    def _download_job(job: tuple[SearchRecord, Path]) -> DownloadManifestRow:
+        rec, ws_dir = job
+        return download_single_public_url(session, rec, ws_dir, bucket_name)
+
+    rows.extend(run_parallel_jobs(
+        jobs,
+        _download_job,
+        max_workers=max_workers,
+        on_error=lambda exc: log_event("download", "job_error", {"bucket": bucket_name, "error": str(exc)})
+    ))
+
     append_download_manifest(project_root, rows)
     return as_dataframe(rows, DownloadManifestRow)
 
@@ -1949,9 +2201,12 @@ def run_search_layers(
     google_api_key: str,
     google_cse_id: str,
     seed_manifest: dict,
+    self_refine_rounds: int = DEFAULT_SELF_REFINE_ROUNDS,
+    semantic_rerank: bool = False,
 ) -> Tuple[List[SearchRecord], pd.DataFrame]:
     session = session_factory(email=email)
     all_records: List[SearchRecord] = []
+    source_metrics: Dict[str, Dict[str, int]] = defaultdict(lambda: {"ok": 0, "errors": 0, "records": 0})
 
     for workstream_key, payload in query_pack["workstreams"].items():
         source_map = payload["queries"]
@@ -1986,8 +2241,12 @@ def run_search_layers(
                         r.prisma_reason = reason
                         r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
                     all_records.extend(recs)
+                    source_metrics[source]["ok"] += 1
+                    source_metrics[source]["records"] += len(recs)
                 except Exception as exc:
-                    log(f"Falha em {source} ({workstream_key}/{query_variant}): {exc}")
+                    etype = handle_stage_exception("search_layer", exc, {"source": source, "workstream": workstream_key, "query_variant": query_variant})
+                    log(f"Falha em {source} ({workstream_key}/{query_variant}) [{etype}]")
+                    source_metrics[source]["errors"] += 1
 
         if enable_web and "web" in source_map:
             for query_variant, query in source_map["web"].items():
@@ -2005,8 +2264,12 @@ def run_search_layers(
                             r.prisma_reason = reason
                             r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
                         all_records.extend(recs)
+                        source_metrics["google_cse"]["ok"] += 1
+                        source_metrics["google_cse"]["records"] += len(recs)
                     except Exception as exc:
-                        log(f"Falha em google_cse ({workstream_key}/{query_variant}): {exc}")
+                        etype = handle_stage_exception("search_layer", exc, {"source": "google_cse", "workstream": workstream_key, "query_variant": query_variant})
+                        log(f"Falha em google_cse ({workstream_key}/{query_variant}) [{etype}]")
+                        source_metrics["google_cse"]["errors"] += 1
                 try:
                     log(f"Buscando {workstream_key} | ddg_web | {query_variant}")
                     recs = search_ddg_html(session, workstream_key, query_variant, query, web_retmax)
@@ -2018,8 +2281,95 @@ def run_search_layers(
                         r.prisma_reason = reason
                         r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
                     all_records.extend(recs)
+                    source_metrics["ddg_web"]["ok"] += 1
+                    source_metrics["ddg_web"]["records"] += len(recs)
                 except Exception as exc:
-                    log(f"Falha em ddg_web ({workstream_key}/{query_variant}): {exc}")
+                    etype = handle_stage_exception("search_layer", exc, {"source": "ddg_web", "workstream": workstream_key, "query_variant": query_variant})
+                    log(f"Falha em ddg_web ({workstream_key}/{query_variant}) [{etype}]")
+                    source_metrics["ddg_web"]["errors"] += 1
+                try:
+                    log(f"Buscando {workstream_key} | ddg_web_intl | {query_variant}")
+                    recs = search_ddg_html_international(session, workstream_key, query_variant, query, web_retmax * 2)
+                    for r in recs:
+                        score, matched, decision, reason = score_search_record(r, taxonomy)
+                        r.relevance_score = score
+                        r.keywords_matched = "; ".join(matched)
+                        r.prisma_decision = decision
+                        r.prisma_reason = reason
+                        r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
+                    all_records.extend(recs)
+                    source_metrics["ddg_web_intl"]["ok"] += 1
+                    source_metrics["ddg_web_intl"]["records"] += len(recs)
+                except Exception as exc:
+                    etype = handle_stage_exception("search_layer", exc, {"source": "ddg_web_intl", "workstream": workstream_key, "query_variant": query_variant})
+                    log(f"Falha em ddg_web_intl ({workstream_key}/{query_variant}) [{etype}]")
+                    source_metrics["ddg_web_intl"]["errors"] += 1
+                try:
+                    log(f"Buscando {workstream_key} | bing_rss | {query_variant}")
+                    recs = search_bing_rss(session, workstream_key, query_variant, query, web_retmax * 2)
+                    for r in recs:
+                        score, matched, decision, reason = score_search_record(r, taxonomy)
+                        r.relevance_score = score
+                        r.keywords_matched = "; ".join(matched)
+                        r.prisma_decision = decision
+                        r.prisma_reason = reason
+                        r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
+                    all_records.extend(recs)
+                    source_metrics["bing_rss"]["ok"] += 1
+                    source_metrics["bing_rss"]["records"] += len(recs)
+                except Exception as exc:
+                    etype = handle_stage_exception("search_layer", exc, {"source": "bing_rss", "workstream": workstream_key, "query_variant": query_variant})
+                    log(f"Falha em bing_rss ({workstream_key}/{query_variant}) [{etype}]")
+                    source_metrics["bing_rss"]["errors"] += 1
+                try:
+                    log(f"Buscando {workstream_key} | internet_archive | {query_variant}")
+                    recs = search_internet_archive(session, workstream_key, query_variant, query, web_retmax * 2)
+                    for r in recs:
+                        score, matched, decision, reason = score_search_record(r, taxonomy)
+                        r.relevance_score = score
+                        r.keywords_matched = "; ".join(matched)
+                        r.prisma_decision = decision
+                        r.prisma_reason = reason
+                        r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
+                    all_records.extend(recs)
+                    source_metrics["internet_archive"]["ok"] += 1
+                    source_metrics["internet_archive"]["records"] += len(recs)
+                except Exception as exc:
+                    etype = handle_stage_exception("search_layer", exc, {"source": "internet_archive", "workstream": workstream_key, "query_variant": query_variant})
+                    log(f"Falha em internet_archive ({workstream_key}/{query_variant}) [{etype}]")
+                    source_metrics["internet_archive"]["errors"] += 1
+
+            for rr in range(max(0, self_refine_rounds)):
+                ws_records = [r for r in all_records if r.workstream == workstream_key and r.record_kind == "web" and r.prisma_decision != "EXCLUDE"]
+                ws_records = sorted(ws_records, key=lambda x: x.relevance_score, reverse=True)
+                mined_terms = mine_terms_from_records(ws_records, top_k=8)
+                if not mined_terms:
+                    break
+                refine_query = compact_free_text_query(" ".join(mined_terms), max_terms=10)
+                try:
+                    recs = search_ddg_html_international(session, workstream_key, f"auto_refine_{rr+1}", refine_query, web_retmax)
+                    for r in recs:
+                        score, matched, decision, reason = score_search_record(r, taxonomy)
+                        r.relevance_score = score
+                        r.keywords_matched = "; ".join(matched)
+                        r.prisma_decision = decision
+                        r.prisma_reason = reason
+                        r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
+                    all_records.extend(recs)
+                    source_metrics["auto_refine_web"]["ok"] += 1
+                    source_metrics["auto_refine_web"]["records"] += len(recs)
+                except Exception as exc:
+                    etype = handle_stage_exception("search_layer", exc, {"source": "auto_refine_web", "workstream": workstream_key, "round": rr + 1})
+                    log(f"Falha no auto-refino ({workstream_key}/round{rr+1}) [{etype}]")
+                    source_metrics["auto_refine_web"]["errors"] += 1
+
+            if semantic_rerank:
+                ws_records = [r for r in all_records if r.workstream == workstream_key]
+                rq = taxonomy["workstreams"][workstream_key].get("research_question", "")
+                qseed = " ".join(source_map.get("web", {}).values())
+                ws_sorted = semantic_rerank_records(ws_records, anchor_text=f"{rq} {qseed}")
+                all_records = [r for r in all_records if r.workstream != workstream_key] + ws_sorted
+                log_event("search", "semantic_rerank_done", {"workstream": workstream_key, "records": len(ws_sorted)})
 
     try:
         all_records = enrich_with_unpaywall(session, all_records, email=email, max_records=250)
@@ -2034,6 +2384,7 @@ def run_search_layers(
         except Exception as exc:
             log(f"Crawler oficial falhou: {exc}")
 
+    log_event("search", "source_metrics", payload={k: dict(v) for k, v in source_metrics.items()})
     return deduplicate_records(all_records), official_df
 
 
@@ -2116,6 +2467,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--download-max", type=int, default=DEFAULT_DOWNLOAD_MAX, help="Máximo de downloads por camada")
     parser.add_argument("--crawl-pages", type=int, default=DEFAULT_CRAWL_PAGES, help="Número máximo de páginas web para rastrear")
     parser.add_argument("--crawl-links-per-page", type=int, default=DEFAULT_CRAWL_LINKS_PER_PAGE, help="Máximo de links candidatos por página")
+    parser.add_argument("--download-workers", type=int, default=4, help="Número de workers paralelos para downloads (1-8)")
+    parser.add_argument("--self-refine-rounds", type=int, default=DEFAULT_SELF_REFINE_ROUNDS, help="Rodadas de auto-refino de query web usando evidências coletadas")
+    parser.add_argument("--semantic-rerank", action="store_true", help="Reranqueamento semântico estilo LLM (TF-IDF + cosine)")
     parser.add_argument("--no-web-search", action="store_true", help="Desativa busca web geral")
     parser.add_argument("--no-google", action="store_true", help="Desativa Google CSE mesmo se houver credenciais")
     parser.add_argument("--no-download", action="store_true", help="Desativa downloads automáticos")
@@ -2125,20 +2479,53 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--google-cse-id", default=os.environ.get("GOOGLE_CSE_ID", ""), help="Google CSE ID / cx (opcional)")
     return parser.parse_args()
 
+def build_config(args: argparse.Namespace) -> PipelineConfig:
+    return PipelineConfig(
+        project_root=Path(args.project_root).resolve(),
+        taxonomy_path=args.taxonomy,
+        seed_manifest_path=args.seed_manifest,
+        email=args.email,
+        mode=args.mode,
+        retmax=max(1, args.retmax),
+        web_retmax=max(1, args.web_retmax),
+        download_max=max(1, args.download_max),
+        crawl_pages=max(1, args.crawl_pages),
+        crawl_links_per_page=max(1, args.crawl_links_per_page),
+        self_refine_rounds=max(0, min(3, args.self_refine_rounds)),
+        semantic_rerank=args.semantic_rerank,
+        download_workers=max(1, min(8, args.download_workers)),
+        no_web_search=args.no_web_search,
+        no_google=args.no_google,
+        no_download=args.no_download,
+        no_official_crawl=args.no_official_crawl,
+        ocr_force=args.ocr_force,
+        google_api_key=args.google_api_key,
+        google_cse_id=args.google_cse_id,
+    )
+
 def main() -> None:
     args = parse_args()
-    project_root = Path(args.project_root).resolve()
+    cfg = build_config(args)
+    warnings, errors = validate_runtime_dependencies(cfg.mode)
+    for w in warnings:
+        log(f"Aviso de dependência: {w}")
+    if errors:
+        for e in errors:
+            log(f"Erro de dependência: {e}")
+        raise RuntimeError("Dependências obrigatórias ausentes para o modo selecionado.")
+
+    project_root = cfg.project_root
     scaffold_project(project_root)
     paths = build_default_paths(project_root)
 
     script_dir = Path(__file__).resolve().parent
-    taxonomy_path = Path(args.taxonomy).resolve() if args.taxonomy else paths["taxonomy"]
+    taxonomy_path = Path(cfg.taxonomy_path).resolve() if cfg.taxonomy_path else paths["taxonomy"]
     if not taxonomy_path.exists() and (script_dir / "nutev_keyword_taxonomy_v3.json").exists():
         taxonomy_path = script_dir / "nutev_keyword_taxonomy_v3.json"
     if not taxonomy_path.exists():
         raise FileNotFoundError(f"Taxonomia não encontrada em {taxonomy_path}")
 
-    seed_manifest_path = Path(args.seed_manifest).resolve() if args.seed_manifest else paths["sources"]
+    seed_manifest_path = Path(cfg.seed_manifest_path).resolve() if cfg.seed_manifest_path else paths["sources"]
     if not seed_manifest_path.exists() and (script_dir / "nutev_official_sources_manifest_v3.json").exists():
         seed_manifest_path = script_dir / "nutev_official_sources_manifest_v3.json"
 
@@ -2156,7 +2543,7 @@ def main() -> None:
     write_query_pack_files(query_pack, project_root)
     log("Pacote de buscas gerado.")
 
-    if not args.email:
+    if not cfg.email:
         log("Aviso: use --email para operar de forma educada com PubMed/Crossref/Unpaywall.")
 
     metadata_records: List[SearchRecord] = []
@@ -2165,28 +2552,30 @@ def main() -> None:
     official_df = pd.DataFrame()
     candidate_df = pd.DataFrame()
 
-    if args.mode in ["search", "all", "download"]:
+    if cfg.mode in ["search", "all", "download"]:
         metadata_records, official_df = run_search_layers(
             project_root=project_root,
             taxonomy=taxonomy,
             query_pack=query_pack,
-            email=args.email or "your_email@example.org",
-            retmax=max(1, args.retmax),
-            web_retmax=max(1, args.web_retmax),
-            enable_web=not args.no_web_search,
-            enable_google=not args.no_google,
-            enable_official_crawl=not args.no_official_crawl,
-            google_api_key=args.google_api_key,
-            google_cse_id=args.google_cse_id,
+            email=cfg.email or "your_email@example.org",
+            retmax=cfg.retmax,
+            web_retmax=cfg.web_retmax,
+            enable_web=not cfg.no_web_search,
+            enable_google=not cfg.no_google,
+            enable_official_crawl=not cfg.no_official_crawl,
+            google_api_key=cfg.google_api_key,
+            google_cse_id=cfg.google_cse_id,
             seed_manifest=seed_manifest,
+            self_refine_rounds=cfg.self_refine_rounds,
+            semantic_rerank=cfg.semantic_rerank,
         )
         log(f"Registros totais após deduplicação: {len(metadata_records)}")
 
-        if not args.no_download:
-            dl_session = session_factory(email=args.email or "your_email@example.org")
+        if not cfg.no_download:
+            dl_session = session_factory(email=cfg.email or "your_email@example.org")
 
             # OA bibliográfico
-            dl_oa_df = download_oa_records(dl_session, metadata_records, project_root, max_downloads=max(1, args.download_max))
+            dl_oa_df = download_oa_records(dl_session, metadata_records, project_root, max_downloads=cfg.download_max)
             log(f"OA bibliográfico processado: {len(dl_oa_df)}")
 
             # Candidatos a partir das páginas de resultados web
@@ -2195,22 +2584,22 @@ def main() -> None:
                 dl_session,
                 web_records,
                 project_root,
-                max_pages=max(1, args.crawl_pages),
-                max_links_per_page=max(1, args.crawl_links_per_page),
+                max_pages=cfg.crawl_pages,
+                max_links_per_page=cfg.crawl_links_per_page,
             )
             log(f"Candidatos a partir de resultados web: {len(candidate_df)}")
 
             # downloads de links oriundos da web
-            dl_web_df = download_candidate_links(dl_session, candidate_df, project_root, bucket_name="web_direct_docs", max_downloads=max(1, args.download_max))
+            dl_web_df = download_candidate_links(dl_session, candidate_df, project_root, bucket_name="web_direct_docs", max_downloads=cfg.download_max, max_workers=cfg.download_workers)
             log(f"Links web processados para download: {len(dl_web_df)}")
 
             # downloads de fontes oficiais
             if official_df is not None and not official_df.empty:
-                dl_official_df = download_candidate_links(dl_session, official_df, project_root, bucket_name="official_seed_docs", max_downloads=max(1, args.download_max))
+                dl_official_df = download_candidate_links(dl_session, official_df, project_root, bucket_name="official_seed_docs", max_downloads=cfg.download_max, max_workers=cfg.download_workers)
                 log(f"Links oficiais processados para download: {len(dl_official_df)}")
 
-    if args.mode in ["local", "all", "download"]:
-        local_df, local_sheets = analyze_local_documents(project_root, taxonomy, ocr_force=args.ocr_force)
+    if cfg.mode in ["local", "all", "download"]:
+        local_df, local_sheets = analyze_local_documents(project_root, taxonomy, ocr_force=cfg.ocr_force)
         log(f"Documentos locais analisados: {len(local_df)}")
 
     outputs = write_outputs(project_root, metadata_records, local_df, local_sheets)
