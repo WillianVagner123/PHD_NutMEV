@@ -85,6 +85,7 @@ O gerador de queries agora:
 - combina blocos por rodízio para manter diversidade (clínico + padrão alimentar + implementação + tipo documental);
 - inclui novas variantes focadas em evidência (`systematic_evidence`) e políticas/framework globais (`policy_global`).
 - inclui auto-refino opcional de buscas web com `--self-refine-rounds` (usa termos minerados dos melhores resultados para nova rodada).
+- inclui reranqueamento semântico opcional (`--semantic-rerank`) para priorizar resultados mais alinhados com a pergunta de pesquisa.
 
 ## Robustez de execução (novo)
 

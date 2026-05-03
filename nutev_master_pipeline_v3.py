@@ -213,6 +213,8 @@ class SearchRecord:
     prisma_decision: str = "PENDING"
     prisma_reason: str = ""
     source_rank: int = 0
+    semantic_score: float = 0.0
+    ai_reasoning: str = ""
     query_used: str = ""
     notes: str = ""
     collected_at_utc: str = ""
@@ -271,6 +273,7 @@ class PipelineConfig:
     crawl_pages: int
     crawl_links_per_page: int
     self_refine_rounds: int
+    semantic_rerank: bool
     download_workers: int
     no_web_search: bool
     no_google: bool
@@ -932,6 +935,28 @@ def score_search_record(record: SearchRecord, taxonomy: dict) -> Tuple[float, Li
     else:
         decision, reason = "EXCLUDE", "Baixa aderência ao escopo-alvo"
     return round(score, 2), matched[:20], decision, reason
+
+def semantic_rerank_records(records: List[SearchRecord], anchor_text: str) -> List[SearchRecord]:
+    if not records or TfidfVectorizer is None or cosine_similarity is None:
+        return records
+    corpus = [anchor_text] + [f"{r.title} {r.snippet} {r.abstract}" for r in records]
+    try:
+        vec = TfidfVectorizer(min_df=1, ngram_range=(1, 2), max_features=6000)
+        mat = vec.fit_transform(corpus)
+        sims = cosine_similarity(mat[0:1], mat[1:]).flatten()
+        for i, r in enumerate(records):
+            s = float(sims[i])
+            r.semantic_score = s
+            r.ai_reasoning = (
+                "Alta similaridade semântica com a pergunta."
+                if s >= 0.30 else
+                "Similaridade semântica moderada."
+                if s >= 0.18 else
+                "Baixa similaridade semântica."
+            )
+        return sorted(records, key=lambda x: (x.semantic_score, x.relevance_score), reverse=True)
+    except Exception:
+        return records
 
 def preferred_record(a: SearchRecord, b: SearchRecord) -> SearchRecord:
     score_a = (bool(a.abstract), bool(a.doi), a.is_oa, bool(a.pdf_url), bool(a.landing_url), len(a.title), len(a.abstract), a.relevance_score)
@@ -2177,6 +2202,7 @@ def run_search_layers(
     google_cse_id: str,
     seed_manifest: dict,
     self_refine_rounds: int = DEFAULT_SELF_REFINE_ROUNDS,
+    semantic_rerank: bool = False,
 ) -> Tuple[List[SearchRecord], pd.DataFrame]:
     session = session_factory(email=email)
     all_records: List[SearchRecord] = []
@@ -2337,6 +2363,14 @@ def run_search_layers(
                     log(f"Falha no auto-refino ({workstream_key}/round{rr+1}) [{etype}]")
                     source_metrics["auto_refine_web"]["errors"] += 1
 
+            if semantic_rerank:
+                ws_records = [r for r in all_records if r.workstream == workstream_key]
+                rq = taxonomy["workstreams"][workstream_key].get("research_question", "")
+                qseed = " ".join(source_map.get("web", {}).values())
+                ws_sorted = semantic_rerank_records(ws_records, anchor_text=f"{rq} {qseed}")
+                all_records = [r for r in all_records if r.workstream != workstream_key] + ws_sorted
+                log_event("search", "semantic_rerank_done", {"workstream": workstream_key, "records": len(ws_sorted)})
+
     try:
         all_records = enrich_with_unpaywall(session, all_records, email=email, max_records=250)
     except Exception as exc:
@@ -2435,6 +2469,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--crawl-links-per-page", type=int, default=DEFAULT_CRAWL_LINKS_PER_PAGE, help="Máximo de links candidatos por página")
     parser.add_argument("--download-workers", type=int, default=4, help="Número de workers paralelos para downloads (1-8)")
     parser.add_argument("--self-refine-rounds", type=int, default=DEFAULT_SELF_REFINE_ROUNDS, help="Rodadas de auto-refino de query web usando evidências coletadas")
+    parser.add_argument("--semantic-rerank", action="store_true", help="Reranqueamento semântico estilo LLM (TF-IDF + cosine)")
     parser.add_argument("--no-web-search", action="store_true", help="Desativa busca web geral")
     parser.add_argument("--no-google", action="store_true", help="Desativa Google CSE mesmo se houver credenciais")
     parser.add_argument("--no-download", action="store_true", help="Desativa downloads automáticos")
@@ -2457,6 +2492,7 @@ def build_config(args: argparse.Namespace) -> PipelineConfig:
         crawl_pages=max(1, args.crawl_pages),
         crawl_links_per_page=max(1, args.crawl_links_per_page),
         self_refine_rounds=max(0, min(3, args.self_refine_rounds)),
+        semantic_rerank=args.semantic_rerank,
         download_workers=max(1, min(8, args.download_workers)),
         no_web_search=args.no_web_search,
         no_google=args.no_google,
@@ -2531,6 +2567,7 @@ def main() -> None:
             google_cse_id=cfg.google_cse_id,
             seed_manifest=seed_manifest,
             self_refine_rounds=cfg.self_refine_rounds,
+            semantic_rerank=cfg.semantic_rerank,
         )
         log(f"Registros totais após deduplicação: {len(metadata_records)}")
 
