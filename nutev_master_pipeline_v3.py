@@ -55,8 +55,7 @@ from search_adapters import classify_exception, ddg_extract_results, parse_bing_
 try:
     import pandas as pd
 except Exception:
-    print("ERRO: instale pandas e openpyxl: pip install pandas openpyxl")
-    raise
+    pd = None
 
 try:
     from bs4 import BeautifulSoup
@@ -279,7 +278,11 @@ class PipelineConfig:
     no_google: bool
     no_download: bool
     no_official_crawl: bool
+    ocr_summary: bool
     ocr_force: bool
+    serper: bool
+    sources: str
+    max_candidates: int
     google_api_key: str
     google_cse_id: str
 
@@ -427,6 +430,8 @@ def validate_runtime_dependencies(mode: str) -> tuple[list[str], list[str]]:
     """
     warnings: list[str] = []
     errors: list[str] = []
+    if pd is None and mode in {"search", "download", "all", "local"}:
+        errors.append("pandas/openpyxl ausentes: necessário para tabelas e exports.")
     if mode in {"search", "download", "all"} and BeautifulSoup is None:
         errors.append("beautifulsoup4 ausente: necessário para crawler e parsing web.")
     if mode in {"all", "local", "download"}:
@@ -2130,6 +2135,49 @@ def analyze_local_documents(project_root: Path, taxonomy: dict, ocr_force: bool 
         "DOMAIN_COUNTS": domain_counts_df,
     }
 
+def generate_document_summaries(project_root: Path, local_df: pd.DataFrame) -> Dict[str, str]:
+    if local_df is None or local_df.empty:
+        return {}
+    extracted_dir = ensure_folder(project_root / "05_extraction" / "extracted_texts")
+    summaries_dir = ensure_folder(project_root / "08_docs" / "document_summaries")
+    rows = []
+    for _, row in local_df.iterrows():
+        doc_id = str(row.get("doc_id", "")) or stable_hash(str(row.get("file_path", "")))[:16]
+        excerpt = str(row.get("raw_excerpt", "") or "")
+        txt_path = extracted_dir / f"{doc_id}.txt"
+        txt_path.write_text(excerpt, encoding="utf-8")
+        points = [p.strip() for p in re.split(r"[.!?]+", excerpt) if len(p.strip()) >= 40][:5]
+        md_path = summaries_dir / f"{doc_id}.md"
+        md_path.write_text(
+            "\n".join([
+                f"# {row.get('title_guess', 'Documento')}",
+                f"- arquivo ou URL de origem: {row.get('file_path', '')}",
+                f"- OCR usado: {row.get('used_ocr', False)}",
+                f"- idioma provável: {row.get('language_hint', '')}",
+                f"- tamanho do texto: {row.get('text_len', 0)}",
+                f"- caminho do texto extraído: {txt_path}",
+                "",
+                "## pontos-chave",
+                *([f"- {p}" for p in points] if points else ["- Sem texto suficiente."]),
+            ]),
+            encoding="utf-8",
+        )
+        rows.append({"doc_id": doc_id, "title": row.get("title_guess", ""), "source": row.get("file_path", ""), "used_ocr": row.get("used_ocr", False), "language": row.get("language_hint", ""), "text_len": row.get("text_len", 0), "text_path": str(txt_path), "summary_path": str(md_path)})
+    sdf = pd.DataFrame(rows)
+    csv_path = project_root / "06_tables" / "NUTEV_DOCUMENT_SUMMARIES_v3.csv"
+    xlsx_path = project_root / "06_tables" / "NUTEV_DOCUMENT_SUMMARIES_v3.xlsx"
+    sdf.to_csv(csv_path, index=False)
+    sdf.to_excel(xlsx_path, index=False)
+    geral_md = project_root / "08_docs" / "NUTEV_RESUMO_GERAL_v3.md"
+    geral_md.write_text("# NUTEV RESUMO GERAL v3\n\n" + "\n".join([f"- {r['title']} -> {r['summary_path']}" for r in rows]), encoding="utf-8")
+    if py_docx is not None:
+        doc = py_docx.Document()
+        doc.add_heading("NUTEV RESUMO GERAL v3", 0)
+        for r in rows:
+            doc.add_paragraph(f"{r['title']} | {r['summary_path']}")
+        doc.save(project_root / "08_docs" / "NUTEV_RESUMO_GERAL_v3.docx")
+    return {"summary_csv": str(csv_path), "summary_xlsx": str(xlsx_path), "summary_md": str(geral_md)}
+
 
 # ============================================================
 # EXPORTS
@@ -2201,6 +2249,8 @@ def run_search_layers(
     google_api_key: str,
     google_cse_id: str,
     seed_manifest: dict,
+    selected_sources: set[str] | None = None,
+    enable_serper: bool = False,
     self_refine_rounds: int = DEFAULT_SELF_REFINE_ROUNDS,
     semantic_rerank: bool = False,
 ) -> Tuple[List[SearchRecord], pd.DataFrame]:
@@ -2208,6 +2258,7 @@ def run_search_layers(
     all_records: List[SearchRecord] = []
     source_metrics: Dict[str, Dict[str, int]] = defaultdict(lambda: {"ok": 0, "errors": 0, "records": 0})
 
+    selected_sources = selected_sources or set()
     for workstream_key, payload in query_pack["workstreams"].items():
         source_map = payload["queries"]
         priority_sources = taxonomy["workstreams"][workstream_key].get("source_priority", [])
@@ -2217,6 +2268,8 @@ def run_search_layers(
         for source in ordered_sources:
             for query_variant, query in source_map[source].items():
                 if not query.strip():
+                    continue
+                if selected_sources and source not in selected_sources:
                     continue
                 log(f"Buscando {workstream_key} | {source} | {query_variant}")
                 try:
@@ -2252,7 +2305,7 @@ def run_search_layers(
             for query_variant, query in source_map["web"].items():
                 if not query.strip():
                     continue
-                if enable_google and google_api_key and google_cse_id:
+                if enable_google and google_api_key and google_cse_id and (not selected_sources or "google_cse" in selected_sources):
                     try:
                         log(f"Buscando {workstream_key} | google_cse | {query_variant}")
                         recs = search_google_cse(session, workstream_key, query_variant, query, google_api_key, google_cse_id, web_retmax)
@@ -2270,74 +2323,78 @@ def run_search_layers(
                         etype = handle_stage_exception("search_layer", exc, {"source": "google_cse", "workstream": workstream_key, "query_variant": query_variant})
                         log(f"Falha em google_cse ({workstream_key}/{query_variant}) [{etype}]")
                         source_metrics["google_cse"]["errors"] += 1
-                try:
-                    log(f"Buscando {workstream_key} | ddg_web | {query_variant}")
-                    recs = search_ddg_html(session, workstream_key, query_variant, query, web_retmax)
-                    for r in recs:
-                        score, matched, decision, reason = score_search_record(r, taxonomy)
-                        r.relevance_score = score
-                        r.keywords_matched = "; ".join(matched)
-                        r.prisma_decision = decision
-                        r.prisma_reason = reason
-                        r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
-                    all_records.extend(recs)
-                    source_metrics["ddg_web"]["ok"] += 1
-                    source_metrics["ddg_web"]["records"] += len(recs)
-                except Exception as exc:
-                    etype = handle_stage_exception("search_layer", exc, {"source": "ddg_web", "workstream": workstream_key, "query_variant": query_variant})
-                    log(f"Falha em ddg_web ({workstream_key}/{query_variant}) [{etype}]")
-                    source_metrics["ddg_web"]["errors"] += 1
-                try:
-                    log(f"Buscando {workstream_key} | ddg_web_intl | {query_variant}")
-                    recs = search_ddg_html_international(session, workstream_key, query_variant, query, web_retmax * 2)
-                    for r in recs:
-                        score, matched, decision, reason = score_search_record(r, taxonomy)
-                        r.relevance_score = score
-                        r.keywords_matched = "; ".join(matched)
-                        r.prisma_decision = decision
-                        r.prisma_reason = reason
-                        r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
-                    all_records.extend(recs)
-                    source_metrics["ddg_web_intl"]["ok"] += 1
-                    source_metrics["ddg_web_intl"]["records"] += len(recs)
-                except Exception as exc:
-                    etype = handle_stage_exception("search_layer", exc, {"source": "ddg_web_intl", "workstream": workstream_key, "query_variant": query_variant})
-                    log(f"Falha em ddg_web_intl ({workstream_key}/{query_variant}) [{etype}]")
-                    source_metrics["ddg_web_intl"]["errors"] += 1
-                try:
-                    log(f"Buscando {workstream_key} | bing_rss | {query_variant}")
-                    recs = search_bing_rss(session, workstream_key, query_variant, query, web_retmax * 2)
-                    for r in recs:
-                        score, matched, decision, reason = score_search_record(r, taxonomy)
-                        r.relevance_score = score
-                        r.keywords_matched = "; ".join(matched)
-                        r.prisma_decision = decision
-                        r.prisma_reason = reason
-                        r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
-                    all_records.extend(recs)
-                    source_metrics["bing_rss"]["ok"] += 1
-                    source_metrics["bing_rss"]["records"] += len(recs)
-                except Exception as exc:
-                    etype = handle_stage_exception("search_layer", exc, {"source": "bing_rss", "workstream": workstream_key, "query_variant": query_variant})
-                    log(f"Falha em bing_rss ({workstream_key}/{query_variant}) [{etype}]")
-                    source_metrics["bing_rss"]["errors"] += 1
-                try:
-                    log(f"Buscando {workstream_key} | internet_archive | {query_variant}")
-                    recs = search_internet_archive(session, workstream_key, query_variant, query, web_retmax * 2)
-                    for r in recs:
-                        score, matched, decision, reason = score_search_record(r, taxonomy)
-                        r.relevance_score = score
-                        r.keywords_matched = "; ".join(matched)
-                        r.prisma_decision = decision
-                        r.prisma_reason = reason
-                        r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
-                    all_records.extend(recs)
-                    source_metrics["internet_archive"]["ok"] += 1
-                    source_metrics["internet_archive"]["records"] += len(recs)
-                except Exception as exc:
-                    etype = handle_stage_exception("search_layer", exc, {"source": "internet_archive", "workstream": workstream_key, "query_variant": query_variant})
-                    log(f"Falha em internet_archive ({workstream_key}/{query_variant}) [{etype}]")
-                    source_metrics["internet_archive"]["errors"] += 1
+                if not selected_sources or "ddg" in selected_sources:
+                    try:
+                        log(f"Buscando {workstream_key} | ddg_web | {query_variant}")
+                        recs = search_ddg_html(session, workstream_key, query_variant, query, web_retmax)
+                        for r in recs:
+                            score, matched, decision, reason = score_search_record(r, taxonomy)
+                            r.relevance_score = score
+                            r.keywords_matched = "; ".join(matched)
+                            r.prisma_decision = decision
+                            r.prisma_reason = reason
+                            r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
+                        all_records.extend(recs)
+                        source_metrics["ddg_web"]["ok"] += 1
+                        source_metrics["ddg_web"]["records"] += len(recs)
+                    except Exception as exc:
+                        etype = handle_stage_exception("search_layer", exc, {"source": "ddg_web", "workstream": workstream_key, "query_variant": query_variant})
+                        log(f"Falha em ddg_web ({workstream_key}/{query_variant}) [{etype}]")
+                        source_metrics["ddg_web"]["errors"] += 1
+                if not selected_sources or "ddg_intl" in selected_sources:
+                    try:
+                        log(f"Buscando {workstream_key} | ddg_web_intl | {query_variant}")
+                        recs = search_ddg_html_international(session, workstream_key, query_variant, query, web_retmax * 2)
+                        for r in recs:
+                            score, matched, decision, reason = score_search_record(r, taxonomy)
+                            r.relevance_score = score
+                            r.keywords_matched = "; ".join(matched)
+                            r.prisma_decision = decision
+                            r.prisma_reason = reason
+                            r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
+                        all_records.extend(recs)
+                        source_metrics["ddg_web_intl"]["ok"] += 1
+                        source_metrics["ddg_web_intl"]["records"] += len(recs)
+                    except Exception as exc:
+                        etype = handle_stage_exception("search_layer", exc, {"source": "ddg_web_intl", "workstream": workstream_key, "query_variant": query_variant})
+                        log(f"Falha em ddg_web_intl ({workstream_key}/{query_variant}) [{etype}]")
+                        source_metrics["ddg_web_intl"]["errors"] += 1
+                if not selected_sources or "bing" in selected_sources:
+                    try:
+                        log(f"Buscando {workstream_key} | bing_rss | {query_variant}")
+                        recs = search_bing_rss(session, workstream_key, query_variant, query, web_retmax * 2)
+                        for r in recs:
+                            score, matched, decision, reason = score_search_record(r, taxonomy)
+                            r.relevance_score = score
+                            r.keywords_matched = "; ".join(matched)
+                            r.prisma_decision = decision
+                            r.prisma_reason = reason
+                            r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
+                        all_records.extend(recs)
+                        source_metrics["bing_rss"]["ok"] += 1
+                        source_metrics["bing_rss"]["records"] += len(recs)
+                    except Exception as exc:
+                        etype = handle_stage_exception("search_layer", exc, {"source": "bing_rss", "workstream": workstream_key, "query_variant": query_variant})
+                        log(f"Falha em bing_rss ({workstream_key}/{query_variant}) [{etype}]")
+                        source_metrics["bing_rss"]["errors"] += 1
+                if not selected_sources or "archive" in selected_sources:
+                    try:
+                        log(f"Buscando {workstream_key} | internet_archive | {query_variant}")
+                        recs = search_internet_archive(session, workstream_key, query_variant, query, web_retmax * 2)
+                        for r in recs:
+                            score, matched, decision, reason = score_search_record(r, taxonomy)
+                            r.relevance_score = score
+                            r.keywords_matched = "; ".join(matched)
+                            r.prisma_decision = decision
+                            r.prisma_reason = reason
+                            r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
+                        all_records.extend(recs)
+                        source_metrics["internet_archive"]["ok"] += 1
+                        source_metrics["internet_archive"]["records"] += len(recs)
+                    except Exception as exc:
+                        etype = handle_stage_exception("search_layer", exc, {"source": "internet_archive", "workstream": workstream_key, "query_variant": query_variant})
+                        log(f"Falha em internet_archive ({workstream_key}/{query_variant}) [{etype}]")
+                        source_metrics["internet_archive"]["errors"] += 1
 
             for rr in range(max(0, self_refine_rounds)):
                 ws_records = [r for r in all_records if r.workstream == workstream_key and r.record_kind == "web" and r.prisma_decision != "EXCLUDE"]
@@ -2371,10 +2428,13 @@ def run_search_layers(
                 all_records = [r for r in all_records if r.workstream != workstream_key] + ws_sorted
                 log_event("search", "semantic_rerank_done", {"workstream": workstream_key, "records": len(ws_sorted)})
 
-    try:
-        all_records = enrich_with_unpaywall(session, all_records, email=email, max_records=250)
-    except Exception as exc:
-        log(f"Enriquecimento Unpaywall falhou: {exc}")
+    if not selected_sources or "unpaywall" in selected_sources:
+        try:
+            all_records = enrich_with_unpaywall(session, all_records, email=email, max_records=250)
+        except Exception as exc:
+            log(f"Enriquecimento Unpaywall falhou: {exc}")
+    if enable_serper and not os.environ.get("SERPER_API_KEY"):
+        log("Serper habilitado, mas SERPER_API_KEY ausente. Fonte ignorada.")
 
     official_df = pd.DataFrame()
     if enable_official_crawl:
@@ -2474,7 +2534,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--no-google", action="store_true", help="Desativa Google CSE mesmo se houver credenciais")
     parser.add_argument("--no-download", action="store_true", help="Desativa downloads automáticos")
     parser.add_argument("--no-official-crawl", action="store_true", help="Desativa crawler de fontes oficiais")
+    parser.add_argument("--sources", default="pubmed,europepmc,openalex,crossref,doaj,bing,archive,unpaywall", help="Fontes habilitadas separadas por vírgula")
+    parser.add_argument("--serper", action="store_true", help="Ativa Serper (somente se SERPER_API_KEY existir)")
+    parser.add_argument("--ocr-summary", action="store_true", help="Gera resumos individuais e resumo geral a partir dos textos extraídos")
     parser.add_argument("--ocr-force", action="store_true", help="Força OCR em PDFs e imagens")
+    parser.add_argument("--max-candidates", type=int, default=0, help="Limite opcional de candidatos para download/crawl (0=sem limite)")
     parser.add_argument("--google-api-key", default=os.environ.get("GOOGLE_API_KEY", ""), help="Google API key (opcional)")
     parser.add_argument("--google-cse-id", default=os.environ.get("GOOGLE_CSE_ID", ""), help="Google CSE ID / cx (opcional)")
     return parser.parse_args()
@@ -2498,7 +2562,11 @@ def build_config(args: argparse.Namespace) -> PipelineConfig:
         no_google=args.no_google,
         no_download=args.no_download,
         no_official_crawl=args.no_official_crawl,
+        ocr_summary=args.ocr_summary,
         ocr_force=args.ocr_force,
+        serper=args.serper,
+        sources=args.sources,
+        max_candidates=max(0, args.max_candidates),
         google_api_key=args.google_api_key,
         google_cse_id=args.google_cse_id,
     )
@@ -2566,6 +2634,8 @@ def main() -> None:
             google_api_key=cfg.google_api_key,
             google_cse_id=cfg.google_cse_id,
             seed_manifest=seed_manifest,
+            selected_sources={s.strip().lower() for s in cfg.sources.split(",") if s.strip()},
+            enable_serper=cfg.serper,
             self_refine_rounds=cfg.self_refine_rounds,
             semantic_rerank=cfg.semantic_rerank,
         )
@@ -2601,6 +2671,10 @@ def main() -> None:
     if cfg.mode in ["local", "all", "download"]:
         local_df, local_sheets = analyze_local_documents(project_root, taxonomy, ocr_force=cfg.ocr_force)
         log(f"Documentos locais analisados: {len(local_df)}")
+        if cfg.ocr_summary:
+            extra_outputs = generate_document_summaries(project_root, local_df)
+            for k, v in extra_outputs.items():
+                log(f"{k}: {v}")
 
     outputs = write_outputs(project_root, metadata_records, local_df, local_sheets)
     log("Pipeline finalizado.")
