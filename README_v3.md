@@ -145,3 +145,33 @@ O script baixa **documentos públicos** e não tenta acessar material por login/
 - PDFs escaneados -> OCR
 - imagens -> OCR
 - DOCX/XLSX/CSV/HTML/JSON/PPTX -> extração textual nativa
+
+## Curadoria legal e execução sem limite artificial (v3)
+
+Este projeto é de **curadoria/indexação legal**. Ele:
+- não hospeda conteúdo protegido;
+- não integra fontes piratas (Anna’s Archive, Sci-Hub, LibGen, Z-Library);
+- processa apenas fontes públicas e documentos obtidos legalmente.
+
+Documentos próprios obtidos legalmente podem ser colocados em:
+`NUTEV_MASTER_PROJECT/03_corpus/03E_manual_drop`.
+
+Novas flags úteis:
+- `--sources` (ex.: `pubmed,europepmc,openalex,crossref,doaj,bing,archive,unpaywall`)
+- `--serper` (usa Serper somente se `SERPER_API_KEY` existir)
+- `--ocr-summary`
+- `--max-candidates 0` (sem limite)
+- `--download-max 0` (sem limite)
+- `--max-file-size-mb 0` (sem limite de tamanho)
+- `--save-raw-responses` (salva respostas brutas em `02_search_hits/raw_responses`)
+- `--resume` (retomada via fila local sqlite)
+
+Execução rápida:
+```bash
+python nutev_master_pipeline_v3.py --project-root NUTEV_MASTER_PROJECT --email seu_email@exemplo.com --sources openalex,crossref,europepmc,bing --retmax 5 --web-retmax 3 --download-max 10 --crawl-pages 5 --ocr-summary
+```
+
+Execução sem limite artificial:
+```bash
+python nutev_master_pipeline_v3.py --project-root NUTEV_MASTER_PROJECT --email seu_email@exemplo.com --sources pubmed,europepmc,openalex,crossref,doaj,bing,archive,unpaywall --download-max 0 --max-candidates 0 --max-file-size-mb 0 --ocr-summary --resume
+```

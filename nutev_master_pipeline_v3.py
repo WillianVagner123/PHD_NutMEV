@@ -28,6 +28,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import gzip
 import json
 import math
 import os
@@ -36,6 +37,7 @@ import re
 import sys
 import time
 import zipfile
+import sqlite3
 from collections import defaultdict
 from dataclasses import asdict, dataclass, fields
 from datetime import datetime, timezone
@@ -106,6 +108,7 @@ DEFAULT_CRAWL_LINKS_PER_PAGE = 20
 DEFAULT_SELF_REFINE_ROUNDS = 1
 LOCAL_MIN_TEXT_FOR_DEDUP = 500
 MAX_DOWNLOAD_BYTES = 80_000_000
+DEFAULT_MAX_FILE_SIZE_MB = 80
 SOURCE_RETRY_POLICY = {
     "pubmed": 5,
     "europepmc": 5,
@@ -217,6 +220,13 @@ class SearchRecord:
     query_used: str = ""
     notes: str = ""
     collected_at_utc: str = ""
+    isbn: str = ""
+    license_status: str = ""
+    official_url: str = ""
+    open_access_url: str = ""
+    curation_status: str = "candidate"
+    curation_score: float = 0.0
+    duplicate_key: str = ""
 
 @dataclass
 class LocalDocumentRecord:
@@ -283,6 +293,9 @@ class PipelineConfig:
     serper: bool
     sources: str
     max_candidates: int
+    max_file_size_mb: int
+    save_raw_responses: bool
+    resume: bool
     google_api_key: str
     google_cse_id: str
 
@@ -456,6 +469,35 @@ def write_text(path: Path, content: str) -> Path:
     path.write_text(content, encoding="utf-8")
     return path
 
+def save_raw_response(project_root: Path, source: str, query: str, payload: Any, status: str = "ok", error: str = "") -> None:
+    stamp = datetime.now().strftime("%Y%m%d_%H")
+    out_dir = ensure_folder(project_root / "02_search_hits" / "raw_responses" / stamp)
+    fname = f"{slugify(source,30)}_{stable_hash(query)[:10]}.json.gz"
+    out_path = out_dir / fname
+    raw = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    with gzip.open(out_path, "wb") as gz:
+        gz.write(raw)
+    idx_path = project_root / "02_search_hits" / "raw" / "NUTEV_RAW_RESPONSE_INDEX.csv"
+    ensure_folder(idx_path.parent)
+    write_header = not idx_path.exists()
+    with idx_path.open("a", encoding="utf-8", newline="") as f:
+        w = csv.writer(f)
+        if write_header:
+            w.writerow(["source", "query", "raw_path", "collected_at_utc", "status", "error"])
+        w.writerow([source, query, str(out_path), now_utc_iso(), status, error])
+
+def init_processing_queue(project_root: Path) -> Path:
+    db = project_root / "07_logs" / "nutev_processing_queue.sqlite"
+    ensure_folder(db.parent)
+    con = sqlite3.connect(db)
+    con.execute("""CREATE TABLE IF NOT EXISTS queue (
+        queue_id INTEGER PRIMARY KEY AUTOINCREMENT, source TEXT, query TEXT, url TEXT, doi TEXT,
+        status INTEGER DEFAULT 0, attempts INTEGER DEFAULT 0, last_error TEXT, created_at TEXT, updated_at TEXT, result_path TEXT
+    )""")
+    con.commit()
+    con.close()
+    return db
+
 def row_dicts_to_excel(sheets: Dict[str, pd.DataFrame], out_path: Path) -> None:
     ensure_folder(out_path.parent)
     with pd.ExcelWriter(out_path, engine="openpyxl") as writer:
@@ -564,7 +606,7 @@ def stream_download(session: requests.Session, url: str, out_path: Path, max_byt
                     if not chunk:
                         continue
                     size += len(chunk)
-                    if size > max_bytes:
+                    if max_bytes > 0 and size > max_bytes:
                         return False, f'Arquivo excede limite configurado ({max_bytes} bytes)', size
                     f.write(chunk)
             safe_sleep()
@@ -1630,7 +1672,7 @@ def append_download_manifest(project_root: Path, rows: List[DownloadManifestRow]
     header = not path.exists()
     df.to_csv(path, mode=mode, header=header, index=False, encoding="utf-8")
 
-def download_single_public_url(session: requests.Session, record: SearchRecord, bucket_root: Path, bucket_name: str) -> DownloadManifestRow:
+def download_single_public_url(session: requests.Session, record: SearchRecord, bucket_root: Path, bucket_name: str, max_bytes: int = MAX_DOWNLOAD_BYTES) -> DownloadManifestRow:
     url = first_nonempty(record.pdf_url, record.oa_url, record.landing_url)
     ext_guess = detect_extension_from_response(url, "")
     if ext_guess not in DOWNLOADABLE_EXT:
@@ -1639,7 +1681,7 @@ def download_single_public_url(session: requests.Session, record: SearchRecord, 
     if out_path.exists() and out_path.stat().st_size > 0:
         return DownloadManifestRow(record.workstream, bucket_name, record.source, record.title, url, record.parent_url, str(out_path), "exists", "", out_path.stat().st_size, "", now_utc_iso())
 
-    ok, info, size = stream_download(session, url, out_path)
+    ok, info, size = stream_download(session, url, out_path, max_bytes=max_bytes)
     status = "downloaded" if ok else "failed"
     if not ok and out_path.exists():
         try:
@@ -1648,12 +1690,12 @@ def download_single_public_url(session: requests.Session, record: SearchRecord, 
             pass
     return DownloadManifestRow(record.workstream, bucket_name, record.source, record.title, url, record.parent_url, str(out_path), status, info, size, info if ok else "", now_utc_iso())
 
-def download_oa_records(session: requests.Session, records: List[SearchRecord], project_root: Path, max_downloads: int = DEFAULT_DOWNLOAD_MAX) -> pd.DataFrame:
+def download_oa_records(session: requests.Session, records: List[SearchRecord], project_root: Path, max_downloads: int = DEFAULT_DOWNLOAD_MAX, max_bytes: int = MAX_DOWNLOAD_BYTES) -> pd.DataFrame:
     rows: List[DownloadManifestRow] = []
     downloaded = 0
     seen = set()
     for record in records:
-        if downloaded >= max_downloads:
+        if max_downloads > 0 and downloaded >= max_downloads:
             break
         target_url = first_nonempty(record.pdf_url, record.oa_url)
         if not target_url or target_url in seen:
@@ -1663,7 +1705,7 @@ def download_oa_records(session: requests.Session, records: List[SearchRecord], 
             continue
         seen.add(target_url)
         ws_dir = ensure_folder(project_root / "03_corpus" / "03A_bibliographic_oa" / record.workstream)
-        row = download_single_public_url(session, record, ws_dir, "bibliographic_oa")
+        row = download_single_public_url(session, record, ws_dir, "bibliographic_oa", max_bytes=max_bytes)
         rows.append(row)
         if row.status in {"downloaded", "exists"}:
             downloaded += 1
@@ -1765,6 +1807,7 @@ def download_candidate_links(
     bucket_name: str,
     max_downloads: int = DEFAULT_DOWNLOAD_MAX,
     max_workers: int = 4,
+    max_bytes: int = MAX_DOWNLOAD_BYTES,
 ) -> pd.DataFrame:
     rows: List[DownloadManifestRow] = []
     jobs = []
@@ -1772,7 +1815,7 @@ def download_candidate_links(
     if candidate_df is None or candidate_df.empty:
         return pd.DataFrame()
     for _, row in candidate_df.iterrows():
-        if len(jobs) >= max_downloads:
+        if max_downloads > 0 and len(jobs) >= max_downloads:
             break
         url = first_nonempty(row.get("link_url"), "")
         if not url or url in seen:
@@ -1803,7 +1846,7 @@ def download_candidate_links(
 
     def _download_job(job: tuple[SearchRecord, Path]) -> DownloadManifestRow:
         rec, ws_dir = job
-        return download_single_public_url(session, rec, ws_dir, bucket_name)
+        return download_single_public_url(session, rec, ws_dir, bucket_name, max_bytes=max_bytes)
 
     rows.extend(run_parallel_jobs(
         jobs,
@@ -2251,6 +2294,7 @@ def run_search_layers(
     seed_manifest: dict,
     selected_sources: set[str] | None = None,
     enable_serper: bool = False,
+    save_raw: bool = False,
     self_refine_rounds: int = DEFAULT_SELF_REFINE_ROUNDS,
     semantic_rerank: bool = False,
 ) -> Tuple[List[SearchRecord], pd.DataFrame]:
@@ -2294,9 +2338,13 @@ def run_search_layers(
                         r.prisma_reason = reason
                         r.source_rank = priority_sources.index(r.source) + 1 if r.source in priority_sources else 999
                     all_records.extend(recs)
+                    if save_raw:
+                        save_raw_response(project_root, source, query, [asdict(x) for x in recs], status="ok")
                     source_metrics[source]["ok"] += 1
                     source_metrics[source]["records"] += len(recs)
                 except Exception as exc:
+                    if save_raw:
+                        save_raw_response(project_root, source, query, {}, status="error", error=str(exc))
                     etype = handle_stage_exception("search_layer", exc, {"source": source, "workstream": workstream_key, "query_variant": query_variant})
                     log(f"Falha em {source} ({workstream_key}/{query_variant}) [{etype}]")
                     source_metrics[source]["errors"] += 1
@@ -2539,6 +2587,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--ocr-summary", action="store_true", help="Gera resumos individuais e resumo geral a partir dos textos extraídos")
     parser.add_argument("--ocr-force", action="store_true", help="Força OCR em PDFs e imagens")
     parser.add_argument("--max-candidates", type=int, default=0, help="Limite opcional de candidatos para download/crawl (0=sem limite)")
+    parser.add_argument("--max-file-size-mb", type=int, default=DEFAULT_MAX_FILE_SIZE_MB, help="Limite de tamanho por arquivo em MB (0=sem limite)")
+    parser.add_argument("--save-raw-responses", action="store_true", help="Salva respostas brutas de busca em 02_search_hits/raw_responses")
+    parser.add_argument("--resume", action="store_true", help="Retoma execução com fila local sqlite")
     parser.add_argument("--google-api-key", default=os.environ.get("GOOGLE_API_KEY", ""), help="Google API key (opcional)")
     parser.add_argument("--google-cse-id", default=os.environ.get("GOOGLE_CSE_ID", ""), help="Google CSE ID / cx (opcional)")
     return parser.parse_args()
@@ -2567,6 +2618,9 @@ def build_config(args: argparse.Namespace) -> PipelineConfig:
         serper=args.serper,
         sources=args.sources,
         max_candidates=max(0, args.max_candidates),
+        max_file_size_mb=max(0, args.max_file_size_mb),
+        save_raw_responses=args.save_raw_responses,
+        resume=args.resume,
         google_api_key=args.google_api_key,
         google_cse_id=args.google_cse_id,
     )
@@ -2585,6 +2639,11 @@ def main() -> None:
     project_root = cfg.project_root
     scaffold_project(project_root)
     paths = build_default_paths(project_root)
+    if cfg.resume:
+        qdb = init_processing_queue(project_root)
+        log(f"Fila local sqlite ativa: {qdb}")
+    if cfg.download_max == 0:
+        log("download-max=0: execução sem limite de quantidade; pode demorar e ocupar bastante espaço.")
 
     script_dir = Path(__file__).resolve().parent
     taxonomy_path = Path(cfg.taxonomy_path).resolve() if cfg.taxonomy_path else paths["taxonomy"]
@@ -2636,6 +2695,7 @@ def main() -> None:
             seed_manifest=seed_manifest,
             selected_sources={s.strip().lower() for s in cfg.sources.split(",") if s.strip()},
             enable_serper=cfg.serper,
+            save_raw=cfg.save_raw_responses,
             self_refine_rounds=cfg.self_refine_rounds,
             semantic_rerank=cfg.semantic_rerank,
         )
@@ -2643,9 +2703,10 @@ def main() -> None:
 
         if not cfg.no_download:
             dl_session = session_factory(email=cfg.email or "your_email@example.org")
+            max_bytes = 0 if cfg.max_file_size_mb == 0 else cfg.max_file_size_mb * 1024 * 1024
 
             # OA bibliográfico
-            dl_oa_df = download_oa_records(dl_session, metadata_records, project_root, max_downloads=cfg.download_max)
+            dl_oa_df = download_oa_records(dl_session, metadata_records, project_root, max_downloads=cfg.download_max, max_bytes=max_bytes)
             log(f"OA bibliográfico processado: {len(dl_oa_df)}")
 
             # Candidatos a partir das páginas de resultados web
@@ -2657,15 +2718,17 @@ def main() -> None:
                 max_pages=cfg.crawl_pages,
                 max_links_per_page=cfg.crawl_links_per_page,
             )
+            if cfg.max_candidates > 0 and not candidate_df.empty:
+                candidate_df = candidate_df.head(cfg.max_candidates)
             log(f"Candidatos a partir de resultados web: {len(candidate_df)}")
 
             # downloads de links oriundos da web
-            dl_web_df = download_candidate_links(dl_session, candidate_df, project_root, bucket_name="web_direct_docs", max_downloads=cfg.download_max, max_workers=cfg.download_workers)
+            dl_web_df = download_candidate_links(dl_session, candidate_df, project_root, bucket_name="web_direct_docs", max_downloads=cfg.download_max, max_workers=cfg.download_workers, max_bytes=max_bytes)
             log(f"Links web processados para download: {len(dl_web_df)}")
 
             # downloads de fontes oficiais
             if official_df is not None and not official_df.empty:
-                dl_official_df = download_candidate_links(dl_session, official_df, project_root, bucket_name="official_seed_docs", max_downloads=cfg.download_max, max_workers=cfg.download_workers)
+                dl_official_df = download_candidate_links(dl_session, official_df, project_root, bucket_name="official_seed_docs", max_downloads=cfg.download_max, max_workers=cfg.download_workers, max_bytes=max_bytes)
                 log(f"Links oficiais processados para download: {len(dl_official_df)}")
 
     if cfg.mode in ["local", "all", "download"]:
